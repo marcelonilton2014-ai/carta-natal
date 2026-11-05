@@ -3,9 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="description" content="Uma carta de Natal está retida na central. Abra um lacre por dia até 17/11.">
+<meta name="description" content="Uma carta de Natal está retida na central. Libere um selo por dia até 17/11.">
 <meta property="og:title" content="Correio de Natal · Central de Triagem">
-<meta property="og:description" content="Tem uma carta de Natal para você. Abra um lacre por dia até 17/11.">
+<meta property="og:description" content="Tem uma carta de Natal para você. Libere um selo por dia até 17/11.">
 <meta property="og:image" content="img/capa.jpg">
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
 <title>Central de Triagem</title>
@@ -43,13 +43,16 @@ body {
 .bar { display: flex; justify-content: space-between; align-items: center; gap: 12px; font-size: 11px; font-weight: 500; letter-spacing: .24em; text-transform: uppercase; }
 .bar .dot { display: inline-block; width: 9px; height: 9px; border-radius: 50%; background: var(--gold); margin-right: 8px; vertical-align: 1px; }
 
-/* Progresso: 5 lacres */
+/* Progresso: 5 selos */
 .seals { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 10px; }
 .sealbox { display: flex; flex-direction: column; align-items: center; gap: 6px; }
-.sealbox img { width: 100%; max-width: 64px; aspect-ratio: 1; object-fit: contain; filter: grayscale(1) brightness(.45) contrast(.9); opacity: .55; transition: filter .6s ease, opacity .6s ease, transform .6s ease; }
-.sealbox.open img { filter: none; opacity: 1; }
-.sealbox.today img { opacity: .9; filter: grayscale(.6) brightness(.8); animation: glow 2.2s ease-in-out infinite; }
-.sealbox.today.open img { animation: none; filter: none; }
+.sealbox .stamp { display: block; width: 100%; max-width: 58px; aspect-ratio: 4 / 5; padding: 4px; box-sizing: border-box; background: radial-gradient(circle at 4px 4px, transparent 2.4px, #F3EBDF 2.9px) -4px -4px / 8px 8px; opacity: .45; transition: opacity .5s ease, transform .5s ease; }
+.sealbox .art { display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; background: #3A1418; overflow: hidden; }
+.sealbox .art img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.sealbox .art b { font-family: var(--display); font-style: italic; font-weight: 400; font-size: 22px; color: var(--gold-soft); }
+.sealbox.open .stamp { opacity: 1; transform: rotate(-4deg); box-shadow: 0 4px 10px rgba(0,0,0,.4); }
+.sealbox.today .stamp { opacity: .85; animation: glow 2.2s ease-in-out infinite; }
+.sealbox.today.open .stamp { animation: none; }
 @keyframes glow { 50% { transform: scale(1.06); } }
 .sealbox span { font-size: 10px; letter-spacing: .14em; color: var(--muted); }
 .sealbox.today span { color: var(--gold-soft); }
@@ -142,7 +145,7 @@ body {
 .after { display: flex; flex-direction: column; gap: 10px; }
 .after .fine { text-align: center; }
 @media (prefers-reduced-motion: reduce) {
-  .caret, .sealbox.today img, .reveal, .term.shake { animation: none; }
+  .caret, .sealbox.today .stamp, .reveal, .term.shake { animation: none; }
 }
 </style>
 
@@ -156,10 +159,10 @@ body {
 
   <div class="bar">
     <div><span class="dot" aria-hidden="true"></span>Central de triagem</div>
-    <div id="bar-right">Lacre 1 de 5</div>
+    <div id="bar-right">Selo 1 de 5</div>
   </div>
 
-  <div class="seals" id="seals" aria-label="Progresso dos lacres"></div>
+  <div class="seals" id="seals" aria-label="Progresso dos selos"></div>
 
   <section class="term" id="term" aria-label="Terminal da central de triagem">
     <div class="head"><span>Correio de Natal</span><span id="obj">Objeto VJ1711</span></div>
@@ -172,7 +175,7 @@ body {
     <form class="answer" id="answer" hidden>
       <label for="ans">Sua resposta</label>
       <input id="ans" name="resposta" type="text" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="sua resposta">
-      <button type="submit">Abrir lacre</button>
+      <button type="submit">Liberar selo</button>
     </form>
     <button class="hintbtn" id="hintbtn" type="button" hidden>Pedir uma dica</button>
   </section>
@@ -182,7 +185,7 @@ body {
   <button class="rename" id="rename" type="button" hidden>Não é você? Trocar nome</button>
 
   <details class="past" id="past" hidden>
-    <summary>Lacres já abertos</summary>
+    <summary>Selos já liberados</summary>
     <div class="inner" id="past-inner"></div>
   </details>
 
@@ -205,14 +208,15 @@ var CONFIG = {
 };
 /* Respostas embaralhadas (texto invertido em base64). Dia 16: troque pela resposta real. */
 var DAYS = [
-  { d: '2026-11-12', label: '12/11', q: 'Cidade cujo nome quer dizer “casa do pão”.', k: 'TUVMRUI=', hint: 'Fica na Judeia. Foi lá que Jesus nasceu.', reveal: 'names', next: 'o nome desta carta.' },
+  { d: '2026-11-12', label: '12/11', q: 'Em que cidade Jesus nasceu?', k: 'TUVMRUI=', hint: 'Fica na Judeia e começa com B.', reveal: 'names', next: 'o nome desta carta.' },
   { d: '2026-11-13', label: '13/11', q: 'Nome que significa “Deus conosco”.', k: 'TEVVTkFNRQ==', hint: 'Está em Mateus 1,23. Começa com E.', reveal: 'capa', next: 'uma foto que ninguém viu.' },
-  { d: '2026-11-14', label: '14/11', q: 'O que guiou os Magos até o Menino?', k: 'QUxFUlRTRQ==', hint: 'Brilhou no céu do Oriente. Está no lacre desta carta.', reveal: 'foto', next: 'as primeiras palavras da carta.' },
+  { d: '2026-11-14', label: '14/11', q: 'O que guiou os Magos até o Menino?', k: 'QUxFUlRTRQ==', hint: 'Brilhou no céu do Oriente e guiou três reis.', reveal: 'foto', next: 'as primeiras palavras da carta.' },
   { d: '2026-11-15', label: '15/11', q: '“E o Verbo se fez ____ e habitou entre nós.” (Jo 1,14)', k: 'RU5SQUM=', hint: 'Cinco letras. Deus se fez gente como a gente.', reveal: 'letra', next: 'a última chave. Ela está com os artistas.' },
   { d: '2026-11-16', label: '16/11', q: null, k: 'QUlSQU0=', hint: null, reveal: 'liberada', next: 'à meia-noite, a carta chega.' }
 ];
 DAYS[4].q = 'Nos Stories de ' + CONFIG.artist16 + ' tem um envelope escrito à mão. Para quem é?';
 DAYS[4].hint = 'Abra o perfil de ' + CONFIG.artist16 + ' e veja os Stories de hoje. O nome está depois de “Para:”.';
+var STAMP_ART = ['estrela.webp', 'capa.jpg', 'artistas.jpg', 'lettering.webp', 'lacre.webp'];
 var ARTISTS = ['Danúbia', 'Davidson Silva', 'Fátima Souza', 'Flávio Vitor Jr.', 'GBA Worship', 'Ramon e Rafael', 'Um Peregrino'];
 /* Dia 14: um vídeo por remetente. Coloque o arquivo .mp4 em img/videos/ e o caminho em "video". Vazio = tela de exemplo. */
 var ACTS = [
@@ -275,15 +279,15 @@ function revealNode(kind) {
   var w = document.createElement('section'); w.className = 'reveal';
   var html = '';
   if (kind === 'names') {
-    html = '<div class="kicker">Lacre 1 · aberto</div><h2>Estes são os remetentes.</h2><p>Sete artistas escreveram esta carta à mão. Ainda falta descobrir o que tem dentro.</p><ul class="names">' + ARTISTS.map(function (a) { return '<li>' + a + '</li>'; }).join('') + '</ul>';
+    html = '<div class="kicker">Selo 1 · liberado</div><h2>Estes são os remetentes.</h2><p>Sete artistas escreveram esta carta à mão. Ainda falta descobrir o que tem dentro.</p><ul class="names">' + ARTISTS.map(function (a) { return '<li>' + a + '</li>'; }).join('') + '</ul>';
   } else if (kind === 'capa') {
-    html = '<div class="kicker">Lacre 2 · aberto</div><h2>A carta tem nome.</h2><img class="pic" src="img/capa.jpg" alt="Capa do single Viva Jesus" width="800" height="800"><p>Viva Jesus. Uma música de Natal na voz dos sete remetentes, que chega no dia 17.</p>';
+    html = '<div class="kicker">Selo 2 · liberado</div><h2>A carta tem nome.</h2><img class="pic" src="img/capa.jpg" alt="Capa do single Viva Jesus" width="800" height="800"><p>Viva Jesus. Uma música de Natal na voz dos sete remetentes, que chega no dia 17.</p>';
   } else if (kind === 'foto') {
-    html = '<div class="kicker">Lacre 3 · aberto</div><h2>Uma foto que ninguém viu.</h2><div class="postal"><img src="img/artistas.jpg" alt="Os 7 artistas de Viva Jesus reunidos numa sala decorada para o Natal" width="1100" height="700"><div class="cap"><span class="h">com carinho, os remetentes</span><span class="m">Belém · 17 XI</span></div></div>';
+    html = '<div class="kicker">Selo 3 · liberado</div><h2>Uma foto que ninguém viu.</h2><div class="postal"><img src="img/artistas.jpg" alt="Os 7 artistas de Viva Jesus reunidos numa sala decorada para o Natal" width="1100" height="700"><div class="cap"><span class="h">com carinho, os remetentes</span><span class="m">Belém · 17 XI</span></div></div>';
   } else if (kind === 'letra') {
-    html = '<div class="kicker">Lacre 4 · aberto</div><h2>As primeiras palavras.</h2><div class="lyric">É mais um Natal\npois o Verbo entre a gente viveu.\nÉ mais um Natal,\no Deus menino nasceu.</div><a class="btn btn-ghost" href="' + CONFIG.teaserUrl + '" target="_blank" rel="noopener">Ouvir o trecho do refrão</a>';
+    html = '<div class="kicker">Selo 4 · liberado</div><h2>As primeiras palavras.</h2><div class="lyric">É mais um Natal\npois o Verbo entre a gente viveu.\nÉ mais um Natal,\no Deus menino nasceu.</div><a class="btn btn-ghost" href="' + CONFIG.teaserUrl + '" target="_blank" rel="noopener">Ouvir o trecho do refrão</a>';
   } else if (kind === 'liberada') {
-    html = '<div class="kicker">Lacre 5 · aberto</div><h2>Carta liberada.</h2><div class="free"><p>Você abriu os cinco lacres. Como presente, um áudio dos bastidores que ainda não saiu em lugar nenhum.</p><a class="btn btn-ghost" href="' + CONFIG.bonusUrl + '" target="_blank" rel="noopener">Ouvir o áudio de bastidor</a></div><p>À meia-noite, Viva Jesus chega para todo mundo. Quem guardou a carta recebe primeiro.</p>';
+    html = '<div class="kicker">Selo 5 · liberado</div><h2>Carta pronta para envio.</h2><div class="free"><p>Você liberou os cinco selos. Como presente, um áudio dos bastidores que ainda não saiu em lugar nenhum.</p><a class="btn btn-ghost" href="' + CONFIG.bonusUrl + '" target="_blank" rel="noopener">Ouvir o áudio de bastidor</a></div><p>À meia-noite, Viva Jesus chega para todo mundo. Quem guardou a carta recebe primeiro.</p>';
   }
   w.innerHTML = html;
   if (kind === 'foto') w.appendChild(buildChooser());
@@ -361,7 +365,7 @@ function nextNode(i) {
   var n = document.createElement('div'); n.className = 'next';
   var d = DAYS[i + 1];
   n.innerHTML = '<span class="k">' + (d ? 'Amanhã · ' + d.label + ' · 00h' : 'Hoje · 00h') + '</span><span class="v"></span>';
-  n.querySelector('.v').textContent = d ? 'Novo lacre: ' + DAYS[i].next : 'À meia-noite, a carta chega para todo mundo.';
+  n.querySelector('.v').textContent = d ? 'Novo selo: ' + DAYS[i].next : 'À meia-noite, a carta chega para todo mundo.';
   return n;
 }
 
@@ -373,8 +377,8 @@ function renderSeals(idx) {
     var open = launched() || (i < idx) || (i === idx && solved(i));
     var div = document.createElement('div');
     div.className = 'sealbox' + (open ? ' open' : '') + (i === idx && !launched() ? ' today' : '');
-    div.innerHTML = '<img src="img/lacre.webp" alt=""><span>' + d.label + '</span>';
-    div.setAttribute('aria-label', 'Lacre ' + (i + 1) + ', ' + d.label + ', ' + (open ? 'aberto' : 'fechado'));
+    div.innerHTML = '<span class="stamp"><span class="art">' + (open ? '<img src="img/' + STAMP_ART[i] + '" alt="">' : '<b>?</b>') + '</span></span><span>' + d.label + '</span>';
+    div.setAttribute('aria-label', 'Selo ' + (i + 1) + ', ' + d.label + ', ' + (open ? 'liberado' : 'bloqueado'));
     box.appendChild(div);
   });
 }
@@ -400,7 +404,7 @@ function render() {
 
   if (launched()) {
     $('bar-right').textContent = 'Entregue';
-    type([{ t: '> objeto VJ1711 · ' + who, c: 'dim' }, { t: '> 5 de 5 lacres abertos.', c: 'ok' }, { t: '> status: ENTREGUE.', c: 'ok' }, { t: 'Viva Jesus chegou. Agora é a sua vez de mandar para alguém.', c: 'q' }]);
+    type([{ t: '> objeto VJ1711 · ' + who, c: 'dim' }, { t: '> 5 de 5 selos colados. carta enviada.', c: 'ok' }, { t: '> status: ENTREGUE.', c: 'ok' }, { t: 'Viva Jesus chegou. Agora é a sua vez de mandar para alguém.', c: 'q' }]);
     var r = document.createElement('section'); r.className = 'reveal';
     r.innerHTML = '<div class="kicker">17 · XI</div><h2>A carta chegou.</h2><img class="pic" src="img/capa.jpg" alt="Capa do single Viva Jesus" width="800" height="800">';
     var a = document.createElement('a'); a.className = 'btn btn-primary'; a.href = CONFIG.listenUrl; a.target = '_blank'; a.rel = 'noopener'; a.textContent = 'Ouvir agora';
@@ -409,23 +413,23 @@ function render() {
   }
   if (idx < 0) {
     $('bar-right').textContent = 'Abre 12/11';
-    type([{ t: '> central de triagem em preparação.', c: 'dim' }, { t: '> primeiro lacre disponível em 12/11 · 00h.', c: 'p' }]);
+    type([{ t: '> central de triagem em preparação.', c: 'dim' }, { t: '> primeiro selo disponível em 12/11 · 00h.', c: 'p' }]);
     return;
   }
-  $('bar-right').textContent = 'Lacre ' + (idx + 1) + ' de 5';
+  $('bar-right').textContent = 'Selo ' + (idx + 1) + ' de 5';
   var d = DAYS[idx];
   if (solved(idx)) { showSolved(idx, false); return; }
   var intro = idx === 0
-    ? [{ t: '> buscando objeto VJ1711...', c: 'dim' }, { t: '> ' + who, c: 'dim' }, { t: '> ERRO: carta retida na central.', c: 'err' }, { t: '> 5 lacres bloqueados. um abre por dia.', c: 'p' }, { t: '> LACRE 1 · charada do dia:', c: 'p' }]
-    : [{ t: '> objeto VJ1711 · ' + who, c: 'dim' }, { t: '> ' + idx + ' de 5 lacres abertos.', c: 'ok' }, { t: '> LACRE ' + (idx + 1) + ' · charada do dia:', c: 'p' }];
+    ? [{ t: '> buscando objeto VJ1711...', c: 'dim' }, { t: '> ' + who, c: 'dim' }, { t: '> ERRO: carta retida na central.', c: 'err' }, { t: '> faltam 5 selos para o envio.', c: 'p' }, { t: '> um selo é liberado por dia.', c: 'p' }, { t: '> SELO 1 · charada do dia:', c: 'p' }]
+    : [{ t: '> objeto VJ1711 · ' + who, c: 'dim' }, { t: '> ' + idx + ' de 5 selos colados.', c: 'ok' }, { t: '> SELO ' + (idx + 1) + ' · charada do dia:', c: 'p' }];
   intro.push({ t: d.q, c: 'q' });
   type(intro, function () { $('answer').hidden = false; $('ans').value = ''; });
 }
 function showSolved(idx, fresh) {
   var d = DAYS[idx];
-  var lines = [{ t: '> LACRE ' + (idx + 1) + ' aberto.', c: 'ok' }, { t: '> ' + (idx + 1) + ' de 5 lacres abertos.', c: 'ok' }];
-  if (DAYS[idx + 1]) lines.push({ t: '> próximo lacre: ' + DAYS[idx + 1].label + ' · 00h.', c: 'p' });
-  else lines.push({ t: '> carta liberada. entrega: hoje, 00h.', c: 'p' });
+  var lines = [{ t: '> SELO ' + (idx + 1) + ' liberado.', c: 'ok' }, { t: '> ' + (idx + 1) + ' de 5 selos colados.', c: 'ok' }];
+  if (DAYS[idx + 1]) lines.push({ t: '> próximo selo: ' + DAYS[idx + 1].label + ' · 00h.', c: 'p' });
+  else lines.push({ t: '> carta pronta. entrega: hoje, 00h.', c: 'p' });
   type(lines);
   renderSeals(idx);
   var slot = $('reveal-slot'); slot.textContent = '';
@@ -455,7 +459,7 @@ $('answer').addEventListener('submit', function (e) {
   } else {
     wrong++;
     var t = $('term'); t.classList.remove('shake'); void t.offsetWidth; t.classList.add('shake');
-    var line = document.createElement('span'); line.className = 'err'; line.textContent = '\n> "' + norm(v) + '" não abre este lacre. tente de novo.';
+    var line = document.createElement('span'); line.className = 'err'; line.textContent = '\n> "' + norm(v) + '" não libera este selo. tente de novo.';
     $('lines').insertBefore(line, $('lines').querySelector('.caret'));
     if (wrong >= 2) $('hintbtn').hidden = false;
     $('ans').select();
