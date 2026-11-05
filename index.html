@@ -69,6 +69,8 @@ body {
 .answer { display: flex; gap: 8px; margin-top: 14px; }
 .answer label { position: absolute; left: -9999px; }
 .answer input { flex: 1; min-width: 0; min-height: 50px; padding: 0 14px; background: #FFFDF8; color: var(--ink); border: 1.5px solid var(--ink); font-family: var(--mono); font-size: 16px; font-weight: 500; letter-spacing: .14em; text-transform: uppercase; }
+.rename { align-self: center; background: none; border: 0; color: var(--muted); font-family: var(--mono); font-size: 11px; letter-spacing: .1em; text-decoration: underline; cursor: pointer; padding: 6px; }
+.rename:focus-visible { outline: 3px solid var(--gold-soft); outline-offset: 3px; }
 .answer input::placeholder { color: #9A8E80; letter-spacing: .08em; }
 .answer button { min-height: 50px; padding: 0 16px; border: 0; background: var(--ink); color: var(--paper); font-family: var(--mono); font-size: 12px; font-weight: 600; letter-spacing: .18em; text-transform: uppercase; cursor: pointer; }
 .hintbtn { margin-top: 10px; background: none; border: 0; padding: 4px 0; color: var(--wine); font-family: var(--mono); font-size: 12px; text-decoration: underline; cursor: pointer; }
@@ -162,6 +164,11 @@ body {
   <section class="term" id="term" aria-label="Terminal da central de triagem">
     <div class="head"><span>Correio de Natal</span><span id="obj">Objeto VJ1711</span></div>
     <div class="lines" id="lines" aria-live="polite"></div>
+    <form class="answer" id="nameform" hidden>
+      <label for="nm-in">Seu nome</label>
+      <input id="nm-in" name="nome" type="text" maxlength="20" autocomplete="given-name" spellcheck="false" placeholder="seu primeiro nome">
+      <button type="submit">Continuar</button>
+    </form>
     <form class="answer" id="answer" hidden>
       <label for="ans">Sua resposta</label>
       <input id="ans" name="resposta" type="text" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="sua resposta">
@@ -171,6 +178,8 @@ body {
   </section>
 
   <div id="reveal-slot"></div>
+
+  <button class="rename" id="rename" type="button" hidden>Não é você? Trocar nome</button>
 
   <details class="past" id="past" hidden>
     <summary>Lacres já abertos</summary>
@@ -228,7 +237,9 @@ function store(k, v) { try { if (v === undefined) return localStorage.getItem(k)
 function norm(s) { return (s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toUpperCase().replace(/[^A-Z0-9 ]/g, ' ').replace(/\s+/g, ' ').trim(); }
 function key(w) { try { return btoa(w.split('').reverse().join('')); } catch (e) { return ''; } }
 function matches(input, k) { var words = norm(input).split(' '); var all = norm(input).replace(/ /g, ''); return words.some(function (w) { return key(w) === k; }) || key(all) === k; }
-var nome = (params.get('nome') || '').replace(/[^\p{L}\p{M}' -]/gu, '').trim().split(' ')[0].slice(0, 20);
+function cleanName(s) { return (s || '').replace(/[^\p{L}\p{M}' -]/gu, '').trim().split(' ')[0].slice(0, 20); }
+var nome = cleanName(params.get('nome'));
+if (nome) store('vj-nome', nome); else nome = cleanName(store('vj-nome'));
 var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 function todayIndex() { var t = today(), n = -1; DAYS.forEach(function (d, i) { if (d.d <= t) n = i; }); return n; } // -1 antes de 12/11
@@ -375,7 +386,14 @@ function renderPast(idx) {
 }
 function render() {
   var idx = todayIndex();
-  wrong = 0; $('hintbtn').hidden = true; $('answer').hidden = true; $('reveal-slot').textContent = '';
+  wrong = 0; $('hintbtn').hidden = true; $('answer').hidden = true; $('nameform').hidden = true; $('reveal-slot').textContent = '';
+  $('rename').hidden = !nome;
+  if (!nome) {
+    renderSeals(idx); $('past').hidden = true;
+    $('bar-right').textContent = 'Identificação';
+    type([{ t: '> buscando objeto VJ1711...', c: 'dim' }, { t: '> carta de Natal encontrada.', c: 'ok' }, { t: '> falta o nome do destinatário.', c: 'p' }, { t: 'Para quem é esta carta?', c: 'q' }], function () { $('nameform').hidden = false; $('nm-in').value = ''; });
+    return;
+  }
   $('term').classList.remove('shake');
   var who = nome ? 'para: ' + nome.toUpperCase() : 'para: você';
   renderSeals(idx); renderPast(idx);
@@ -417,6 +435,13 @@ function showSolved(idx, fresh) {
   if (fresh && !reduce) setTimeout(function () { slot.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 900);
 }
 
+$('nameform').addEventListener('submit', function (e) {
+  e.preventDefault();
+  var v = cleanName($('nm-in').value);
+  if (!v) { $('nm-in').focus(); return; }
+  nome = v; store('vj-nome', v); render();
+});
+$('rename').addEventListener('click', function () { nome = ''; store('vj-nome', ''); render(); setTimeout(function () { $('nm-in').focus(); }, 50); });
 $('answer').addEventListener('submit', function (e) {
   e.preventDefault();
   var idx = todayIndex(); if (idx < 0) return;
@@ -454,7 +479,7 @@ function renderTestbar() {
     box.appendChild(b);
   });
   var z = document.createElement('button'); z.type = 'button'; z.textContent = 'Zerar';
-  z.addEventListener('click', function () { DAYS.forEach(function (d) { try { localStorage.removeItem('vj-lacre-' + d.d); } catch (e) {} }); try { localStorage.removeItem('vj-escolha'); localStorage.removeItem('vj-outros'); } catch (e) {} render(); });
+  z.addEventListener('click', function () { DAYS.forEach(function (d) { try { localStorage.removeItem('vj-lacre-' + d.d); } catch (e) {} }); try { localStorage.removeItem('vj-escolha'); localStorage.removeItem('vj-outros'); localStorage.removeItem('vj-nome'); } catch (e) {} nome = cleanName(params.get('nome')); render(); });
   box.appendChild(z);
 }
 
