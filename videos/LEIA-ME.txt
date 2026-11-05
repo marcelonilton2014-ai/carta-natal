@@ -1,0 +1,8 @@
+Coloque aqui o vídeo do trechinho da música (selo 3, dia 15/11) com o nome:
+
+  trechinho.mp4
+
+Dicas:
+- Formato MP4 (H.264), de preferência com até 20 MB para carregar rápido no celular.
+- Pode ser vertical ou horizontal: o site se ajusta ao formato.
+- O GitHub não aceita arquivos acima de 100 MB.

@@ -3,9 +3,12 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="A nossa casa está de portas abertas para você e sua família. Tem uma carta esperando por você.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://marcelonilton2014-ai.github.io/carta-natal/">
 <meta property="og:title" content="Portas Abertas · Viva Jesus">
-<meta property="og:description" content="A nossa casa está de portas abertas para a sua família. Tem uma carta esperando por você.">
-<meta property="og:image" content="img/capa.jpg">
+<meta property="og:description" content="A nossa casa está de portas abertas para você e sua família. Tem uma carta esperando por você.">
+<meta property="og:image" content="https://marcelonilton2014-ai.github.io/carta-natal/img/capa.jpg">
 <style>*{box-sizing:border-box}body{margin:0}</style>
 <title>Portas Abertas</title>
 <meta name="claude:viewport-fit-sides" content="cover">
@@ -302,9 +305,9 @@ body.locked { overflow: hidden; }
 var CONFIG = {
   presaveUrl: 'https://SEU-LINK-DE-PRE-SAVE',
   listenUrl: 'https://SEU-SMARTLINK',
-  teaserUrl: 'https://SEU-LINK-DO-TRECHINHO',          // selo 3: trecho em primeira mão
+  teaserVideo: 'videos/trechinho.mp4',                 // selo 3: trechinho em primeira mão (arquivo na pasta videos/)
   premiereUrl: 'https://SEU-LINK-DA-ESTREIA-NO-YOUTUBE', // selo 4: estreia agendada (ativar o sininho)
-  siteUrl: 'https://SEU-SITE/',
+  siteUrl: 'https://marcelonilton2014-ai.github.io/carta-natal/',
   artistClue: 'Ramon e Rafael',                         // quem esconde a pista do selo 4
   launchDate: '2026-11-17'
 };
@@ -421,6 +424,8 @@ function buildPlayer(opts) {
   if (opts.video) {
     p.innerHTML = tag + '<video playsinline controls preload="metadata"></video>';
     var v = p.querySelector('video'); v.src = opts.video; v.setAttribute('aria-label', opts.label);
+    if (opts.fit) { v.style.objectFit = opts.fit; p.style.aspectRatio = 'auto'; p.style.maxWidth = '100%'; v.style.height = 'auto'; }
+    v.addEventListener('error', function () { var e = document.createElement('p'); e.className = 'fine'; e.style.cssText = 'position:absolute;inset:auto 16px 40%;text-align:center'; e.textContent = 'O vídeo não carregou. Tente de novo em instantes.'; p.appendChild(e); });
     if (opts.autoplay) v.autoplay = true;
     v.addEventListener('ended', function () { if (opts.onEnd) opts.onEnd(); });
   } else {
@@ -481,12 +486,13 @@ function revealNode(kind) {
   var html = '';
   if (kind === 'familia') html = '<div class="kicker">Selo 1 · colado</div><h2>Que bom ter você em casa com a gente.</h2><div class="postal"><img src="img/artistas.jpg" alt="Os artistas de Viva Jesus reunidos numa sala decorada para o Natal" width="1100" height="700"><div class="cap"><span class="h">com carinho, de portas abertas</span><span class="m">GBA Music</span></div></div><p>Essa é a nossa família. Pode se sentar, o café já vem. E cada um aqui separou um recado só para você.</p>';
   else if (kind === 'capa') html = '<div class="kicker">Selo 2 · colado</div><h2>Viva Jesus.</h2><img class="pic" src="img/capa.jpg" alt="Capa do single Viva Jesus" width="800" height="800"><p>Esse é o nome da música que a gente vai cantar junto neste Natal. Estamos ansiosos para celebrar em família, com a sua família, cantando Viva Jesus.</p>';
-  else if (kind === 'trecho') html = '<div class="kicker">Selo 3 · colado</div><h2>Um aperitivo antes da ceia.</h2><p>Está quase lá. A gente sempre fica ansioso pela ceia, mas tem que esperar a meia-noite. Só que aqui em casa ninguém espera com fome: escute um trechinho, em primeira mão.</p><a class="btn btn-ghost" href="' + CONFIG.teaserUrl + '" target="_blank" rel="noopener">Ouvir o trechinho</a>';
+  else if (kind === 'trecho') html = '<div class="kicker">Selo 3 · colado</div><h2>Um aperitivo antes da ceia.</h2><p>Está quase lá. A gente sempre fica ansioso pela ceia, mas tem que esperar a meia-noite. Só que aqui em casa ninguém espera com fome: escute um trechinho, em primeira mão.</p>';
   else if (kind === 'obrigado') html = '<div class="kicker">Selo 4 · colado</div><h2>Obrigado por entrar.</h2><div class="note"><span class="hi">Querido(a) ' + esc(nome || 'amigo') + ',</span>É um prazer ter você na nossa casa. Você faz parte de algo especial, e essa música também é sua.\n\nNo dia 17, contamos com você para ouvir e para compartilhar com quem é especial para você.<span class="sign">Com carinho, a família GBA Music</span></div><a class="btn btn-ghost" href="' + CONFIG.premiereUrl + '" target="_blank" rel="noopener">Ativar o lembrete da estreia</a><p class="fine">Abra a estreia no YouTube e toque no sininho para ser avisado quando começar.</p>';
   var num = { familia: 1, capa: 2, trecho: 3, obrigado: 4 }[kind];
   if (num) html = '<img class="bigstamp" src="img/selos/selo-' + num + '.webp" alt="Selo ' + num + ' de 4" width="411" height="520">' + html;
   w.innerHTML = html;
-  if (kind === 'familia') w.insertBefore(buildChooser(), w.lastChild.nextSibling);
+  if (kind === 'familia') w.appendChild(buildChooser());
+  if (kind === 'trecho') w.appendChild(buildPlayer({ video: CONFIG.teaserVideo, fit: 'contain', label: 'Trechinho de Viva Jesus em primeira mão', bg: '<img src="img/capa.jpg" alt="">', av: '<img src="img/capa.jpg" alt="">', placeholder: 'Aqui entra o trechinho de Viva Jesus.' }));
   return w;
 }
 function ctaNode() {
