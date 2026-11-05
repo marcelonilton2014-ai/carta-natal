@@ -50,7 +50,9 @@ body {
 .sealbox .art { display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; background: #3A1418; overflow: hidden; }
 .sealbox .art img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .sealbox .art b { font-family: var(--display); font-style: italic; font-weight: 400; font-size: 22px; color: var(--gold-soft); }
-.sealbox.open .stamp { opacity: 1; transform: rotate(-4deg); box-shadow: 0 4px 10px rgba(0,0,0,.4); }
+.sealbox .stampimg { display: block; width: 100%; max-width: 58px; height: auto; transform: rotate(-4deg); filter: drop-shadow(0 4px 6px rgba(0,0,0,.45)); animation: stick .5s ease both; }
+@keyframes stick { from { transform: rotate(-14deg) scale(1.35); opacity: 0; } to { transform: rotate(-4deg) scale(1); opacity: 1; } }
+.bigstamp { width: 130px; height: auto; align-self: flex-start; transform: rotate(-4deg); filter: drop-shadow(0 10px 16px rgba(0,0,0,.5)); }
 .sealbox.today .stamp { opacity: .85; animation: glow 2.2s ease-in-out infinite; }
 .sealbox.today.open .stamp { animation: none; }
 @keyframes glow { 50% { transform: scale(1.06); } }
@@ -145,7 +147,7 @@ body {
 .after { display: flex; flex-direction: column; gap: 10px; }
 .after .fine { text-align: center; }
 @media (prefers-reduced-motion: reduce) {
-  .caret, .sealbox.today .stamp, .reveal, .term.shake { animation: none; }
+  .caret, .sealbox.today .stamp, .sealbox .stampimg, .reveal, .term.shake { animation: none; }
 }
 </style>
 
@@ -216,7 +218,6 @@ var DAYS = [
 ];
 DAYS[4].q = 'Nos Stories de ' + CONFIG.artist16 + ' tem um envelope escrito à mão. Para quem é?';
 DAYS[4].hint = 'Abra o perfil de ' + CONFIG.artist16 + ' e veja os Stories de hoje. O nome está depois de “Para:”.';
-var STAMP_ART = ['estrela.webp', 'capa.jpg', 'artistas.jpg', 'lettering.webp', 'lacre.webp'];
 var ARTISTS = ['Danúbia', 'Davidson Silva', 'Fátima Souza', 'Flávio Vitor Jr.', 'GBA Worship', 'Ramon e Rafael', 'Um Peregrino'];
 /* Dia 14: um vídeo por remetente. Coloque o arquivo .mp4 em img/videos/ e o caminho em "video". Vazio = tela de exemplo. */
 var ACTS = [
@@ -289,6 +290,8 @@ function revealNode(kind) {
   } else if (kind === 'liberada') {
     html = '<div class="kicker">Selo 5 · liberado</div><h2>Carta pronta para envio.</h2><div class="free"><p>Você liberou os cinco selos. Como presente, um áudio dos bastidores que ainda não saiu em lugar nenhum.</p><a class="btn btn-ghost" href="' + CONFIG.bonusUrl + '" target="_blank" rel="noopener">Ouvir o áudio de bastidor</a></div><p>À meia-noite, Viva Jesus chega para todo mundo. Quem guardou a carta recebe primeiro.</p>';
   }
+  var num = { names: 1, capa: 2, foto: 3, letra: 4, liberada: 5 }[kind];
+  if (num) html = '<img class="bigstamp" src="img/selos/selo-' + num + '.webp" alt="Selo ' + num + ' de 5" width="340" height="430">' + html;
   w.innerHTML = html;
   if (kind === 'foto') w.appendChild(buildChooser());
   return w;
@@ -377,7 +380,7 @@ function renderSeals(idx) {
     var open = launched() || (i < idx) || (i === idx && solved(i));
     var div = document.createElement('div');
     div.className = 'sealbox' + (open ? ' open' : '') + (i === idx && !launched() ? ' today' : '');
-    div.innerHTML = '<span class="stamp"><span class="art">' + (open ? '<img src="img/' + STAMP_ART[i] + '" alt="">' : '<b>?</b>') + '</span></span><span>' + d.label + '</span>';
+    div.innerHTML = (open ? '<img class="stampimg" src="img/selos/selo-' + (i + 1) + '.webp" alt="">' : '<span class="stamp"><span class="art"><b>?</b></span></span>') + '<span>' + d.label + '</span>';
     div.setAttribute('aria-label', 'Selo ' + (i + 1) + ', ' + d.label + ', ' + (open ? 'liberado' : 'bloqueado'));
     box.appendChild(div);
   });
@@ -406,7 +409,7 @@ function render() {
     $('bar-right').textContent = 'Entregue';
     type([{ t: '> objeto VJ1711 · ' + who, c: 'dim' }, { t: '> 5 de 5 selos colados. carta enviada.', c: 'ok' }, { t: '> status: ENTREGUE.', c: 'ok' }, { t: 'Viva Jesus chegou. Agora é a sua vez de mandar para alguém.', c: 'q' }]);
     var r = document.createElement('section'); r.className = 'reveal';
-    r.innerHTML = '<div class="kicker">17 · XI</div><h2>A carta chegou.</h2><img class="pic" src="img/capa.jpg" alt="Capa do single Viva Jesus" width="800" height="800">';
+    r.innerHTML = '<img class="bigstamp" src="img/selos/carimbo-entregue.webp" alt="Carimbo: Entregue, 17 de novembro" width="300" height="430"><div class="kicker">17 · XI</div><h2>A carta chegou.</h2><img class="pic" src="img/capa.jpg" alt="Capa do single Viva Jesus" width="800" height="800">';
     var a = document.createElement('a'); a.className = 'btn btn-primary'; a.href = CONFIG.listenUrl; a.target = '_blank'; a.rel = 'noopener'; a.textContent = 'Ouvir agora';
     r.appendChild(a); $('reveal-slot').appendChild(r);
     return;
