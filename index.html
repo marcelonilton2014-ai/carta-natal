@@ -3,25 +3,30 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="description" content="Uma carta de Natal está retida na central. Libere um selo por dia até 17/11.">
-<meta property="og:title" content="Correio de Natal · Central de Triagem">
-<meta property="og:description" content="Tem uma carta de Natal para você. Libere um selo por dia até 17/11.">
+<meta property="og:title" content="Portas Abertas · Viva Jesus">
+<meta property="og:description" content="A nossa casa está de portas abertas para a sua família. Tem uma carta esperando por você.">
 <meta property="og:image" content="img/capa.jpg">
-<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
-<title>Central de Triagem</title>
+<style>*{box-sizing:border-box}body{margin:0}</style>
+<title>Portas Abertas</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..700;1,6..96,400..700&family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;1,400&family=La+Belle+Aurore&display=swap">
 <style>
-/* Layout: uma coluna de celular sobre veludo. No centro, o terminal da central de triagem impresso em papel, como um telegrama. Abaixo, a revelação do dia e o pré-save. Visual único (escuro), por escolha. */
+/* Layout: uma coluna de celular. Na entrada, uma porta natalina que se abre. Dentro, 4 selos de progresso, a carta datilografada com a charada do dia e a revelação.
+   IDENTIDADE PROVISÓRIA: troque as cores e fontes abaixo quando a identidade nova chegar. Visual único (escuro), por escolha. */
 :root {
-  --velvet-deep: #1E0507;
+  --wall: #1E0507;          /* fundo da casa */
+  --door: #7A1420;          /* porta */
+  --door-dark: #5A0D17;
+  --frame: #C78F39;         /* batente e detalhes dourados */
+  --light: #FFD98A;         /* luz de dentro da casa */
   --paper: #EDE3D4;
   --paper-2: #F3EBDF;
   --ink: #2A1A12;
   --ink-soft: #5A4A3E;
   --wine: #8A1120;
+  --pine: #1F4A2A;
   --gold: #C78F39;
   --gold-soft: #E2B66A;
   --muted: #C2B2A2;
@@ -30,40 +35,84 @@
   --hand: 'La Belle Aurore', 'Segoe Script', 'Bradley Hand', cursive;
   color-scheme: dark;
 }
-html { background: var(--velvet-deep); }
+[hidden] { display: none !important; }
+html { background: var(--wall); }
 body {
-  background: var(--velvet-deep) url(img/veludo.jpg) center top / cover;
+  background: var(--wall) url(img/veludo.jpg) center top / cover;
   color: var(--paper);
   font-family: var(--mono);
   min-height: 100vh;
   padding-left: max(16px, env(safe-area-inset-left, 0px));
   padding-right: max(16px, env(safe-area-inset-right, 0px));
 }
+body.locked { overflow: hidden; }
 .wrap { max-width: 480px; margin: 0 auto; padding-block: 24px 44px; display: flex; flex-direction: column; gap: 20px; }
+
+/* ===== Entrada: a porta ===== */
+.intro { position: fixed; inset: 0; z-index: 20; background: radial-gradient(ellipse at 50% 40%, #3A0A10 0%, var(--wall) 70%); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 26px; padding: max(24px, env(safe-area-inset-top, 0px)) max(20px, env(safe-area-inset-right, 0px)) max(24px, env(safe-area-inset-bottom, 0px)) max(20px, env(safe-area-inset-left, 0px)); text-align: center; transition: opacity .7s ease .9s; }
+.intro.gone { opacity: 0; pointer-events: none; }
+.intro .kick { font-size: 11px; font-weight: 600; letter-spacing: .32em; color: var(--gold-soft); text-transform: uppercase; }
+.intro h1 { font-family: var(--display); font-weight: 400; font-style: italic; font-size: clamp(30px, 8.4vw, 42px); line-height: 1.1; margin: 0; max-width: 420px; text-wrap: balance; }
+.house { position: relative; width: min(62vw, 270px); aspect-ratio: 5 / 8.4; perspective: 1100px; }
+.house .glow { position: absolute; inset: 6% 7% 0; background: radial-gradient(ellipse at 50% 60%, var(--light) 0%, #F2A94A 35%, #8A3A12 75%, #2A0A06 100%); }
+.house .frame { position: absolute; inset: 0; border: 12px solid var(--frame); border-bottom: 0; border-radius: 50% 50% 0 0 / 22% 22% 0 0; box-shadow: inset 0 0 0 3px #8A6224, 0 18px 40px rgba(0,0,0,.6); pointer-events: none; z-index: 3; }
+.door { position: absolute; inset: 6% 7% 0; background: linear-gradient(90deg, var(--door-dark) 0%, var(--door) 18%, var(--door) 82%, var(--door-dark) 100%); border-radius: 50% 50% 0 0 / 18% 18% 0 0; transform-origin: 0 50%; transition: transform 1.3s cubic-bezier(.6,0,.2,1); z-index: 2; box-shadow: inset 0 0 0 2px rgba(0,0,0,.25); }
+.door .panel { position: absolute; left: 14%; right: 14%; border: 3px solid rgba(0,0,0,.28); box-shadow: inset 0 0 0 2px rgba(255,255,255,.06); border-radius: 4px; }
+.door .p1 { top: 14%; height: 34%; border-radius: 50% 50% 4px 4px / 22% 22% 4px 4px; }
+.door .p2 { top: 54%; height: 38%; }
+.door .knob { position: absolute; right: 11%; top: 56%; width: 7%; aspect-ratio: 1; border-radius: 50%; background: radial-gradient(circle at 35% 35%, #FFE6A6, var(--gold) 60%, #7A5418); box-shadow: 0 2px 4px rgba(0,0,0,.5); }
+.door .wreath { position: absolute; left: 50%; top: 20%; width: 46%; transform: translateX(-50%); }
+.intro.open .door { transform: rotateY(-108deg); }
+.intro.open .house { animation: walkin 1.2s ease-in .8s both; }
+@keyframes walkin { to { transform: scale(2.6); opacity: 0; } }
+.enter { min-height: 54px; padding: 0 34px; border: 0; background: var(--gold); color: var(--wall); font-family: var(--mono); font-size: 13px; font-weight: 600; letter-spacing: .22em; text-transform: uppercase; cursor: pointer; }
+.enter:hover { background: var(--gold-soft); }
+.intro p.sub { margin: 0; font-size: 13px; line-height: 1.6; color: var(--muted); max-width: 340px; }
+
+/* ===== Casa: nome e cafezinho ===== */
+.home { position: fixed; inset: 0; z-index: 19; overflow-y: auto; background: radial-gradient(ellipse at 50% 30%, #4A1A10 0%, #2A0A08 55%, var(--wall) 100%); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 18px; padding: max(24px, env(safe-area-inset-top, 0px)) max(20px, env(safe-area-inset-right, 0px)) max(24px, env(safe-area-inset-bottom, 0px)) max(20px, env(safe-area-inset-left, 0px)); text-align: center; animation: fadein .8s ease both; transition: opacity .6s ease; }
+.home.gone { opacity: 0; pointer-events: none; }
+@keyframes fadein { from { opacity: 0; } }
+.home .kick { font-size: 11px; font-weight: 600; letter-spacing: .32em; color: var(--gold-soft); text-transform: uppercase; }
+.home h1 { font-family: var(--display); font-weight: 400; font-style: italic; font-size: clamp(30px, 8.4vw, 42px); line-height: 1.1; margin: 0; max-width: 420px; text-wrap: balance; }
+.home .sub { margin: 0; font-size: 14px; line-height: 1.65; color: var(--muted); max-width: 340px; }
+.home .answer { width: 100%; max-width: 360px; margin-top: 4px; }
+.home .answer input { border-color: var(--gold); }
+.home .answer button { background: var(--gold); color: var(--wall); }
+.table { position: relative; width: min(84vw, 340px); height: 190px; }
+.table::after { content: ""; position: absolute; left: -6%; right: -6%; bottom: 0; height: 26px; border-radius: 50%; background: radial-gradient(ellipse, rgba(255,200,120,.22), transparent 70%); }
+.env { position: absolute; left: 0; bottom: 18px; width: 62%; aspect-ratio: 3 / 2; background: var(--paper-2) url(img/papel.jpg) 0 0 / 220px 150px; transform: rotate(-6deg); box-shadow: 0 14px 28px rgba(0,0,0,.55); overflow: hidden; }
+.env::before { content: ""; position: absolute; inset: 0; background: linear-gradient(to bottom right, transparent 49.4%, rgba(90,60,40,.25) 50%, transparent 50.6%), linear-gradient(to bottom left, transparent 49.4%, rgba(90,60,40,.25) 50%, transparent 50.6%); background-size: 100% 120%; background-repeat: no-repeat; }
+.env .seal { position: absolute; left: 50%; top: 50%; width: 22%; aspect-ratio: 1; transform: translate(-50%, -38%); border-radius: 50%; background: radial-gradient(circle at 38% 35%, #C23040, var(--wine) 60%, #4A0810); box-shadow: 0 3px 6px rgba(0,0,0,.4); }
+.env .to { position: absolute; left: 9%; bottom: 9%; font-family: var(--hand); font-size: 20px; color: var(--ink); white-space: nowrap; }
+.env .stp { position: absolute; right: 7%; top: 8%; width: 16%; aspect-ratio: 4 / 5; border: 2px dashed rgba(138,17,32,.5); }
+.cup { position: absolute; right: 2%; bottom: 10px; width: 38%; }
+.steam path { animation: steam 3.2s ease-in-out infinite; opacity: 0; }
+.steam path:nth-child(2) { animation-delay: 1s; }
+.steam path:nth-child(3) { animation-delay: 2s; }
+@keyframes steam { 0% { opacity: 0; transform: translateY(8px); } 40% { opacity: .75; } 100% { opacity: 0; transform: translateY(-14px); } }
+
+/* ===== Barra e selos de progresso ===== */
 .bar { display: flex; justify-content: space-between; align-items: center; gap: 12px; font-size: 11px; font-weight: 500; letter-spacing: .24em; text-transform: uppercase; }
 .bar .dot { display: inline-block; width: 9px; height: 9px; border-radius: 50%; background: var(--gold); margin-right: 8px; vertical-align: 1px; }
-
-/* Progresso: 5 selos */
-.seals { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 10px; }
-.sealbox { display: flex; flex-direction: column; align-items: center; gap: 6px; }
-.sealbox .stamp { display: block; width: 100%; max-width: 58px; aspect-ratio: 4 / 5; padding: 4px; box-sizing: border-box; background: radial-gradient(circle at 4px 4px, transparent 2.4px, #F3EBDF 2.9px) -4px -4px / 8px 8px; opacity: .45; transition: opacity .5s ease, transform .5s ease; }
-.sealbox .art { display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; background: #3A1418; overflow: hidden; }
-.sealbox .art img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.seals { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
+.sealbox { display: flex; flex-direction: column; align-items: center; gap: 6px; font-size: 10px; letter-spacing: .14em; color: var(--muted); }
+.sealbox .stamp { display: block; width: 100%; max-width: 66px; aspect-ratio: 4 / 5; padding: 4px; box-sizing: border-box; background: radial-gradient(circle at 4px 4px, transparent 2.4px, #F3EBDF 2.9px) -4px -4px / 8px 8px; opacity: .45; }
+.sealbox .art { display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; background: #3A1418; }
 .sealbox .art b { font-family: var(--display); font-style: italic; font-weight: 400; font-size: 22px; color: var(--gold-soft); }
-.sealbox .stampimg { display: block; width: 100%; max-width: 58px; height: auto; transform: rotate(-4deg); filter: drop-shadow(0 4px 6px rgba(0,0,0,.45)); animation: stick .5s ease both; }
+.sealbox .stampimg { display: block; width: 100%; max-width: 66px; height: auto; transform: rotate(-4deg); filter: drop-shadow(0 4px 6px rgba(0,0,0,.45)); animation: stick .5s ease both; }
 @keyframes stick { from { transform: rotate(-14deg) scale(1.35); opacity: 0; } to { transform: rotate(-4deg) scale(1); opacity: 1; } }
-.bigstamp { width: 130px; height: auto; align-self: flex-start; transform: rotate(-4deg); filter: drop-shadow(0 10px 16px rgba(0,0,0,.5)); }
 .sealbox.today .stamp { opacity: .85; animation: glow 2.2s ease-in-out infinite; }
-.sealbox.today.open .stamp { animation: none; }
+.sealbox.today { color: var(--gold-soft); }
 @keyframes glow { 50% { transform: scale(1.06); } }
-.sealbox span { font-size: 10px; letter-spacing: .14em; color: var(--muted); }
-.sealbox.today span { color: var(--gold-soft); }
+.bigstamp { width: 130px; height: auto; align-self: flex-start; transform: rotate(-4deg); filter: drop-shadow(0 10px 16px rgba(0,0,0,.5)); }
 
-/* Terminal em papel */
+/* ===== A carta datilografada ===== */
 .term { background: var(--paper-2) url(img/papel.jpg) 0 0 / 290px 200px; color: var(--ink); padding: 22px 20px 20px; position: relative; box-shadow: 0 20px 44px rgba(10,0,2,.55); }
-.term::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 6px; background: repeating-linear-gradient(90deg, var(--wine) 0 18px, transparent 18px 28px, #1E3A24 28px 46px, transparent 46px 56px); opacity: .85; }
+.term::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 6px; background: repeating-linear-gradient(90deg, var(--wine) 0 18px, transparent 18px 28px, var(--pine) 28px 46px, transparent 46px 56px); opacity: .85; }
 .term .head { display: flex; justify-content: space-between; gap: 10px; font-size: 10px; font-weight: 600; letter-spacing: .22em; color: var(--wine); text-transform: uppercase; padding-bottom: 12px; border-bottom: 1.5px dashed #B8AE9F; margin-bottom: 14px; }
-.lines { font-size: 14px; line-height: 1.65; min-height: 120px; white-space: pre-wrap; overflow-wrap: anywhere; }
+.lines { font-size: 14px; line-height: 1.65; min-height: 110px; white-space: pre-wrap; overflow-wrap: anywhere; }
+.lines .hi { font-family: var(--hand); font-size: 24px; line-height: 1.4; color: var(--ink); }
 .lines .p { color: var(--wine); font-weight: 600; }
 .lines .q { font-family: var(--display); font-style: italic; font-size: 21px; line-height: 1.3; color: var(--ink); display: block; margin: 6px 0 2px; white-space: normal; text-wrap: balance; }
 .lines .ok { color: #1E5A2E; font-weight: 600; }
@@ -73,24 +122,19 @@ body {
 @keyframes blink { 50% { opacity: 0; } }
 .answer { display: flex; gap: 8px; margin-top: 14px; }
 .answer label { position: absolute; left: -9999px; }
-.answer input { flex: 1; min-width: 0; min-height: 50px; padding: 0 14px; background: #FFFDF8; color: var(--ink); border: 1.5px solid var(--ink); font-family: var(--mono); font-size: 16px; font-weight: 500; letter-spacing: .14em; text-transform: uppercase; }
-.rename { align-self: center; background: none; border: 0; color: var(--muted); font-family: var(--mono); font-size: 11px; letter-spacing: .1em; text-decoration: underline; cursor: pointer; padding: 6px; }
-.rename:focus-visible { outline: 3px solid var(--gold-soft); outline-offset: 3px; }
-.answer input::placeholder { color: #9A8E80; letter-spacing: .08em; }
-.answer button { min-height: 50px; padding: 0 16px; border: 0; background: var(--ink); color: var(--paper); font-family: var(--mono); font-size: 12px; font-weight: 600; letter-spacing: .18em; text-transform: uppercase; cursor: pointer; }
+.answer input { flex: 1; min-width: 0; min-height: 50px; padding: 0 14px; background: #FFFDF8; color: var(--ink); border: 1.5px solid var(--ink); font-family: var(--mono); font-size: 16px; font-weight: 500; letter-spacing: .1em; }
+.answer input::placeholder { color: #9A8E80; letter-spacing: .06em; }
+.answer button { min-height: 50px; padding: 0 16px; border: 0; background: var(--ink); color: var(--paper); font-family: var(--mono); font-size: 12px; font-weight: 600; letter-spacing: .16em; text-transform: uppercase; cursor: pointer; }
 .hintbtn { margin-top: 10px; background: none; border: 0; padding: 4px 0; color: var(--wine); font-family: var(--mono); font-size: 12px; text-decoration: underline; cursor: pointer; }
 .term.shake { animation: tshake .4s ease; }
 @keyframes tshake { 25% { transform: translateX(-6px); } 50% { transform: translateX(5px); } 75% { transform: translateX(-3px); } }
 
-/* Revelação */
+/* ===== Revelações ===== */
 .reveal { display: flex; flex-direction: column; gap: 14px; animation: rise .6s ease both; }
 @keyframes rise { from { opacity: .001; transform: translateY(12px); } to { opacity: 1; transform: none; } }
-.reveal .kicker { font-size: 11px; font-weight: 600; letter-spacing: .26em; color: var(--gold-soft); text-transform: uppercase; }
+.kicker { font-size: 11px; font-weight: 600; letter-spacing: .26em; color: var(--gold-soft); text-transform: uppercase; }
 .reveal h2 { font-family: var(--display); font-weight: 400; font-style: italic; font-size: clamp(30px, 8.5vw, 40px); line-height: 1.08; margin: 0; text-wrap: balance; }
 .reveal p { margin: 0; font-size: 14px; line-height: 1.6; }
-.names { list-style: none; margin: 0; padding: 16px 18px; background: rgba(20,2,4,.45); border: 1px solid rgba(199,143,57,.45); display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px 14px; }
-.names li { font-family: var(--hand); font-size: 22px; line-height: 1.3; }
-.names li:last-child:nth-child(odd) { grid-column: 1 / -1; }
 .pic { display: block; width: 100%; height: auto; box-shadow: 0 18px 40px rgba(10,0,2,.55); }
 .postal { background: var(--paper-2) url(img/papel.jpg) 0 0 / 290px 200px; padding: 10px 10px 0; transform: rotate(-1.5deg); box-shadow: 0 18px 40px rgba(10,0,2,.55); }
 .postal img { display: block; width: 100%; height: auto; }
@@ -98,11 +142,42 @@ body {
 .postal .cap .h { font-family: var(--hand); font-size: 20px; }
 .postal .cap .m { font-size: 9px; letter-spacing: .2em; color: var(--wine); text-transform: uppercase; white-space: nowrap; }
 .lyric { background: var(--paper-2) url(img/papel.jpg) 0 0 / 290px 200px; color: var(--ink); padding: 22px 20px; font-family: var(--display); font-style: italic; font-size: 22px; line-height: 1.5; white-space: pre-line; text-align: center; box-shadow: 0 18px 40px rgba(10,0,2,.55); }
+.note { background: var(--paper-2) url(img/papel.jpg) 0 0 / 290px 200px; color: var(--ink); padding: 22px 20px; font-family: var(--display); font-size: 19px; line-height: 1.5; white-space: pre-line; box-shadow: 0 18px 40px rgba(10,0,2,.55); }
+.note .hi { display: block; font-family: var(--hand); font-size: 26px; margin-bottom: 8px; }
+.note .sign { display: block; margin-top: 14px; font-family: var(--hand); font-size: 22px; color: var(--wine); }
 .free { background: rgba(20,2,4,.5); border: 1px solid var(--gold); padding: 18px; display: flex; flex-direction: column; gap: 12px; }
+
+/* Vídeos (boas-vindas e escolha do dia 2) */
+.welcome { display: flex; flex-direction: column; gap: 12px; }
+.player { position: relative; width: 100%; max-width: 300px; aspect-ratio: 9 / 16; margin: 0 auto; background: #120204; overflow: hidden; box-shadow: 0 18px 40px rgba(10,0,2,.6); }
+.player video { width: 100%; height: 100%; object-fit: cover; display: block; }
+.player .bg { position: absolute; inset: 0; display: flex; filter: blur(12px) brightness(.5); transform: scale(1.15); }
+.player .bg img { flex: 1; min-width: 0; object-fit: cover; }
+.player .ph { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; text-align: center; padding: 24px; }
+.player .ph .av { width: 96px; height: 96px; border-radius: 50%; overflow: hidden; display: flex; border: 2px solid var(--gold-soft); }
+.player .ph .av img { flex: 1; min-width: 0; object-fit: cover; }
+.player .ph p { margin: 0; font-size: 12px; line-height: 1.5; color: var(--paper); }
+.player .ph .play { width: 64px; height: 64px; border-radius: 50%; border: 0; background: var(--gold); color: var(--wall); cursor: pointer; display: flex; align-items: center; justify-content: center; }
+.player .tag { position: absolute; left: 12px; top: 12px; background: var(--paper); color: var(--ink); padding: 5px 10px; font-family: var(--hand); font-size: 18px; z-index: 2; box-shadow: 0 3px 8px rgba(0,0,0,.35); transform: rotate(-2deg); }
+.player .bar2 { position: absolute; left: 0; bottom: 0; height: 4px; background: var(--gold); width: 0; z-index: 2; }
+.chooser { display: flex; flex-direction: column; gap: 14px; background: rgba(20,2,4,.45); border: 1px solid rgba(199,143,57,.5); padding: 18px 14px; }
+.chooser .ask { font-family: var(--display); font-style: italic; font-size: 24px; line-height: 1.2; text-align: center; text-wrap: balance; margin: 0; }
+.chooser .sub { font-size: 12px; color: var(--muted); text-align: center; margin: 0; }
+.acts { display: flex; flex-wrap: wrap; justify-content: center; gap: 14px 10px; }
+.act { width: calc(25% - 8px); min-width: 74px; display: flex; flex-direction: column; align-items: center; gap: 6px; background: none; border: 0; padding: 4px 0; color: var(--paper); cursor: pointer; font-family: var(--mono); }
+.act .av { width: 66px; height: 66px; border-radius: 50%; overflow: hidden; display: flex; border: 2px solid rgba(199,143,57,.7); box-shadow: 0 6px 14px rgba(0,0,0,.4); transition: transform .2s ease, border-color .2s ease; }
+.act .av img { flex: 1; min-width: 0; height: 100%; object-fit: cover; display: block; }
+.act .av img + img { border-left: 2px solid var(--wall); }
+.act .nm { font-size: 10px; line-height: 1.3; letter-spacing: .06em; text-align: center; }
+.act:hover .av { transform: translateY(-2px); border-color: var(--gold-soft); }
+.act[aria-pressed="true"] .av { border-color: var(--gold-soft); box-shadow: 0 0 0 3px rgba(226,182,106,.35); }
+.act.locked { opacity: .35; cursor: not-allowed; }
+.act.locked .av { filter: grayscale(1); }
+.after .fine { text-align: center; }
 
 .btn { display: flex; align-items: center; justify-content: center; text-align: center; min-height: 54px; padding: 14px 20px; border: 0; cursor: pointer; text-decoration: none; font-family: var(--mono); font-size: 13px; font-weight: 600; letter-spacing: .2em; text-transform: uppercase; transition: transform .15s ease, background .2s ease; }
 .btn:active { transform: scale(.98); }
-.btn-primary { background: var(--gold); color: var(--velvet-deep); }
+.btn-primary { background: var(--gold); color: var(--wall); }
 .btn-primary:hover { background: var(--gold-soft); }
 .btn-ghost { background: transparent; color: var(--paper); border: 1.5px solid rgba(237,227,212,.6); }
 .fine { font-size: 12px; line-height: 1.6; color: var(--muted); margin: 0; }
@@ -111,48 +186,77 @@ body {
 .next .v { font-family: var(--display); font-style: italic; font-size: 22px; line-height: 1.25; }
 .past summary { cursor: pointer; font-size: 11px; font-weight: 600; letter-spacing: .22em; text-transform: uppercase; color: var(--muted); padding: 10px 0; }
 .past .inner { display: flex; flex-direction: column; gap: 22px; padding-top: 10px; }
-.answer input:focus-visible, .answer button:focus-visible, .btn:focus-visible, .hintbtn:focus-visible, .testbar button:focus-visible, .past summary:focus-visible { outline: 3px solid var(--gold-soft); outline-offset: 3px; }
+.rename { align-self: center; background: none; border: 0; color: var(--muted); font-family: var(--mono); font-size: 11px; letter-spacing: .1em; text-decoration: underline; cursor: pointer; padding: 6px; }
+.copyline input { width: 100%; box-sizing: border-box; min-height: 44px; background: rgba(20,2,4,.5); color: var(--paper); border: 1px solid rgba(237,227,212,.4); padding: 0 12px; font-family: var(--mono); font-size: 12px; }
 .footer { display: flex; align-items: center; justify-content: center; gap: 12px; font-size: 10px; letter-spacing: .3em; color: var(--muted); text-transform: uppercase; }
 .footer .chip { background: var(--paper); padding: 6px 10px; display: flex; }
 .footer .chip img { width: 44px; height: auto; display: block; }
 .testbar { background: var(--paper); color: var(--ink); padding: 8px; display: flex; flex-wrap: wrap; gap: 6px; align-items: center; font-size: 11px; }
 .testbar button { font-family: var(--mono); font-size: 11px; padding: 6px 8px; border: 1px solid var(--ink); background: transparent; color: var(--ink); cursor: pointer; }
 .testbar button[aria-pressed="true"] { background: var(--wine); color: var(--paper); border-color: var(--wine); }
-/* Dia 14: escolher um remetente */
-.chooser { display: flex; flex-direction: column; gap: 14px; background: rgba(20,2,4,.45); border: 1px solid rgba(199,143,57,.5); padding: 18px 14px; }
-.chooser .ask { font-family: var(--display); font-style: italic; font-size: 24px; line-height: 1.2; text-align: center; text-wrap: balance; margin: 0; }
-.chooser .sub { font-size: 12px; color: var(--muted); text-align: center; margin: 0; }
-.acts { display: flex; flex-wrap: wrap; justify-content: center; gap: 14px 10px; }
-.act { width: calc(25% - 8px); min-width: 74px; display: flex; flex-direction: column; align-items: center; gap: 6px; background: none; border: 0; padding: 4px 0; color: var(--paper); cursor: pointer; font-family: var(--mono); }
-.act .av { width: 66px; height: 66px; border-radius: 50%; overflow: hidden; display: flex; border: 2px solid rgba(199,143,57,.7); box-shadow: 0 6px 14px rgba(0,0,0,.4); transition: transform .2s ease, border-color .2s ease; }
-.act .av img { flex: 1; min-width: 0; height: 100%; object-fit: cover; display: block; }
-.act .av img + img { border-left: 2px solid var(--velvet-deep); }
-.act .nm { font-size: 10px; line-height: 1.3; letter-spacing: .06em; text-align: center; }
-.act:hover .av { transform: translateY(-2px); border-color: var(--gold-soft); }
-.act[aria-pressed="true"] .av { border-color: var(--gold-soft); box-shadow: 0 0 0 3px rgba(226,182,106,.35); }
-.act.locked { opacity: .35; cursor: not-allowed; }
-.act.locked .av { filter: grayscale(1); }
-.act:focus-visible { outline: 3px solid var(--gold-soft); outline-offset: 3px; border-radius: 8px; }
-.player { position: relative; width: 100%; max-width: 300px; aspect-ratio: 9 / 16; margin: 0 auto; background: #120204; overflow: hidden; box-shadow: 0 18px 40px rgba(10,0,2,.6); }
-.player video { width: 100%; height: 100%; object-fit: cover; display: block; }
-.player .bg { position: absolute; inset: 0; display: flex; filter: blur(14px) brightness(.55); transform: scale(1.15); }
-.player .bg img { flex: 1; min-width: 0; object-fit: cover; }
-.player .ph { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; text-align: center; padding: 24px; }
-.player .ph .av { width: 96px; height: 96px; border-radius: 50%; overflow: hidden; display: flex; border: 2px solid var(--gold-soft); }
-.player .ph .av img { flex: 1; min-width: 0; object-fit: cover; }
-.player .ph p { margin: 0; font-size: 12px; line-height: 1.5; color: var(--paper); }
-.player .ph .play { width: 64px; height: 64px; border-radius: 50%; border: 0; background: var(--gold); color: var(--velvet-deep); cursor: pointer; display: flex; align-items: center; justify-content: center; }
-.player .tag { position: absolute; left: 12px; top: 12px; background: var(--paper); color: var(--ink); padding: 5px 10px; font-family: var(--hand); font-size: 18px; z-index: 2; box-shadow: 0 3px 8px rgba(0,0,0,.35); transform: rotate(-2deg); }
-.player .bar2 { position: absolute; left: 0; bottom: 0; height: 4px; background: var(--gold); width: 0; z-index: 2; }
-.after { display: flex; flex-direction: column; gap: 10px; }
-.after .fine { text-align: center; }
+.enter:focus-visible, .answer input:focus-visible, .answer button:focus-visible, .btn:focus-visible, .hintbtn:focus-visible, .testbar button:focus-visible, .past summary:focus-visible, .rename:focus-visible, .act:focus-visible, .play:focus-visible { outline: 3px solid var(--gold-soft); outline-offset: 3px; }
 @media (prefers-reduced-motion: reduce) {
-  .caret, .sealbox.today .stamp, .sealbox .stampimg, .reveal, .term.shake { animation: none; }
+  .caret, .sealbox.today .stamp, .sealbox .stampimg, .reveal, .term.shake, .steam path, .home { animation: none; }
+  .steam path { opacity: .6; }
+  .door { transition: none; }
+  .intro.open .house { animation: none; }
+  .intro { transition: opacity .3s ease; }
 }
 </style>
 
 </head>
 <body>
+<!-- ENTRADA: a porta -->
+<div class="intro" id="intro" role="dialog" aria-modal="true" aria-labelledby="intro-t">
+  <div class="kick">Você é bem-vindo(a)</div>
+  <h1 id="intro-t">A nossa casa está de portas abertas para você e sua família.</h1>
+  <div class="house" aria-hidden="true">
+    <div class="glow"></div>
+    <div class="door">
+      <div class="panel p1"></div><div class="panel p2"></div>
+      <svg class="wreath" viewBox="0 0 100 110" aria-hidden="true">
+        <circle cx="50" cy="50" r="34" fill="none" stroke="#1F4A2A" stroke-width="16"></circle>
+        <circle cx="50" cy="50" r="34" fill="none" stroke="#2E6A3C" stroke-width="7" stroke-dasharray="4 5"></circle>
+        <circle cx="30" cy="30" r="3.4" fill="#C8202E"></circle><circle cx="72" cy="34" r="3.4" fill="#C8202E"></circle><circle cx="22" cy="58" r="3.4" fill="#C8202E"></circle><circle cx="78" cy="62" r="3.4" fill="#C8202E"></circle><circle cx="58" cy="82" r="3.4" fill="#C8202E"></circle>
+        <path d="M50,84 L36,76 L36,94 Z M50,84 L64,76 L64,94 Z" fill="#B3192A"></path>
+        <path d="M46,86 L40,108 M54,86 L60,108" stroke="#B3192A" stroke-width="4" stroke-linecap="round"></path>
+        <circle cx="50" cy="84" r="5" fill="#8A1120"></circle>
+      </svg>
+      <div class="knob"></div>
+    </div>
+    <div class="frame"></div>
+  </div>
+  <button class="enter" id="enter" type="button">Entrar</button>
+  <p class="sub">Entre. Temos uma surpresa para você.</p>
+</div>
+
+<!-- CASA: nome e cafezinho -->
+<div class="home" id="home" hidden role="dialog" aria-modal="true" aria-labelledby="home-t">
+  <div class="table" aria-hidden="true">
+    <div class="env"><span class="stp"></span><span class="seal"></span><span class="to" id="env-to">Para: você</span></div>
+    <svg class="cup" viewBox="0 0 120 130">
+      <g class="steam" fill="none" stroke="#F3EBDF" stroke-width="3" stroke-linecap="round">
+        <path d="M42 46 C34 36 50 30 42 18"></path><path d="M60 46 C52 34 68 28 60 12"></path><path d="M78 46 C70 36 86 30 78 18"></path>
+      </g>
+      <ellipse cx="60" cy="122" rx="54" ry="7" fill="#B88B52"></ellipse>
+      <ellipse cx="60" cy="119" rx="46" ry="5" fill="#E9DCC6"></ellipse>
+      <path d="M96 66 C116 66 116 96 94 96" fill="none" stroke="#EDE3D4" stroke-width="7"></path>
+      <path d="M22 54 L98 54 L92 104 C90 114 82 118 72 118 L48 118 C38 118 30 114 28 104 Z" fill="#EDE3D4"></path>
+      <path d="M26 70 L94 70" stroke="#8A1120" stroke-width="5"></path>
+      <ellipse cx="60" cy="54" rx="38" ry="6" fill="#5A2E14"></ellipse>
+    </svg>
+  </div>
+  <div class="kick" id="home-k">Você está em casa</div>
+  <h1 id="home-t">Que bom que você chegou.</h1>
+  <p class="sub" id="home-sub"></p>
+  <form class="answer" id="nameform" hidden>
+    <label for="nm-in">Seu nome</label>
+    <input id="nm-in" name="nome" type="text" maxlength="20" autocomplete="given-name" spellcheck="false" placeholder="seu primeiro nome">
+    <button type="submit">Entrar</button>
+  </form>
+  <button class="enter" id="homego" type="button" hidden>Abrir a carta</button>
+</div>
+
 <div class="wrap">
   <div class="testbar" id="testbar" hidden>
     <strong>Teste · simular dia:</strong>
@@ -160,24 +264,20 @@ body {
   </div>
 
   <div class="bar">
-    <div><span class="dot" aria-hidden="true"></span>Central de triagem</div>
-    <div id="bar-right">Selo 1 de 5</div>
+    <div><span class="dot" aria-hidden="true"></span>Sua carta</div>
+    <div id="bar-right">Selo 1 de 4</div>
   </div>
 
-  <div class="seals" id="seals" aria-label="Progresso dos selos"></div>
+  <div class="seals" id="seals" aria-label="Selos da sua carta"></div>
 
-  <section class="term" id="term" aria-label="Terminal da central de triagem">
-    <div class="head"><span>Correio de Natal</span><span id="obj">Objeto VJ1711</span></div>
+  
+  <section class="term" id="term" aria-label="Carta do dia">
+    <div class="head"><span id="letter-to">Carta para você</span><span id="letter-date">Viva Jesus</span></div>
     <div class="lines" id="lines" aria-live="polite"></div>
-    <form class="answer" id="nameform" hidden>
-      <label for="nm-in">Seu nome</label>
-      <input id="nm-in" name="nome" type="text" maxlength="20" autocomplete="given-name" spellcheck="false" placeholder="seu primeiro nome">
-      <button type="submit">Continuar</button>
-    </form>
     <form class="answer" id="answer" hidden>
       <label for="ans">Sua resposta</label>
-      <input id="ans" name="resposta" type="text" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="sua resposta">
-      <button type="submit">Liberar selo</button>
+      <input id="ans" name="resposta" type="text" autocomplete="off" spellcheck="false" placeholder="sua resposta">
+      <button type="submit">Colar selo</button>
     </form>
     <button class="hintbtn" id="hintbtn" type="button" hidden>Pedir uma dica</button>
   </section>
@@ -187,13 +287,13 @@ body {
   <button class="rename" id="rename" type="button" hidden>Não é você? Trocar nome</button>
 
   <details class="past" id="past" hidden>
-    <summary>Selos já liberados</summary>
+    <summary>Selos já colados</summary>
     <div class="inner" id="past-inner"></div>
   </details>
 
   <div class="footer">
     <span class="chip"><img src="img/logo_gba.webp" alt="GBA Music"></span>
-    <span>Viva Jesus · 17 · XI</span>
+    <span>17 · XI</span>
   </div>
 </div>
 
@@ -202,24 +302,22 @@ body {
 var CONFIG = {
   presaveUrl: 'https://SEU-LINK-DE-PRE-SAVE',
   listenUrl: 'https://SEU-SMARTLINK',
-  teaserUrl: 'https://SEU-LINK-DO-REELS-DO-REFRAO',   // dia 15: trecho do refrão
-  bonusUrl: 'https://SEU-LINK-DO-AUDIO-DE-BASTIDOR',  // dia 16: conteúdo exclusivo
-  siteUrl: 'https://SEU-SITE/central/',
-  artist16: 'Ramon e Rafael',                          // quem esconde a pista do dia 16
+  teaserUrl: 'https://SEU-LINK-DO-TRECHINHO',          // selo 3: trecho em primeira mão
+  premiereUrl: 'https://SEU-LINK-DA-ESTREIA-NO-YOUTUBE', // selo 4: estreia agendada (ativar o sininho)
+  siteUrl: 'https://SEU-SITE/',
+  artistClue: 'Ramon e Rafael',                         // quem esconde a pista do selo 4
   launchDate: '2026-11-17'
 };
-/* Respostas embaralhadas (texto invertido em base64). Dia 16: troque pela resposta real. */
+/* Respostas embaralhadas (texto invertido em base64). Selo 4: troque pela resposta real. */
 var DAYS = [
-  { d: '2026-11-12', label: '12/11', q: 'Em que cidade Jesus nasceu?', k: 'TUVMRUI=', hint: 'Fica na Judeia e começa com B.', reveal: 'names', next: 'o nome desta carta.' },
-  { d: '2026-11-13', label: '13/11', q: 'Nome que significa “Deus conosco”.', k: 'TEVVTkFNRQ==', hint: 'Está em Mateus 1,23. Começa com E.', reveal: 'capa', next: 'uma foto que ninguém viu.' },
-  { d: '2026-11-14', label: '14/11', q: 'O que guiou os Magos até o Menino?', k: 'QUxFUlRTRQ==', hint: 'Brilhou no céu do Oriente e guiou três reis.', reveal: 'foto', next: 'as primeiras palavras da carta.' },
-  { d: '2026-11-15', label: '15/11', q: '“E o Verbo se fez ____ e habitou entre nós.” (Jo 1,14)', k: 'RU5SQUM=', hint: 'Cinco letras. Deus se fez gente como a gente.', reveal: 'letra', next: 'a última chave. Ela está com os artistas.' },
-  { d: '2026-11-16', label: '16/11', q: null, k: 'QUlSQU0=', hint: null, reveal: 'liberada', next: 'à meia-noite, a carta chega.' }
+  { d: '2026-11-13', label: '13/11', q: 'Em que cidade Jesus nasceu?', k: 'TUVMRUI=', hint: 'Fica na Judeia e começa com B.', reveal: 'familia', next: 'o nome da música que vamos cantar juntos.' },
+  { d: '2026-11-14', label: '14/11', q: 'Qual nome de Jesus significa “Deus conosco”?', k: 'TEVVTkFNRQ==', hint: 'Está em Mateus 1,23. Começa com E.', reveal: 'capa', next: 'um aperitivo antes da ceia.' },
+  { d: '2026-11-15', label: '15/11', q: 'O que guiou os Magos até o Menino?', k: 'QUxFUlRTRQ==', hint: 'Brilhou no céu do Oriente e guiou três reis.', reveal: 'trecho', next: 'o último selo. A pista está com os artistas.' },
+  { d: '2026-11-16', label: '16/11', q: null, k: 'QUlSQU0=', hint: null, reveal: 'obrigado', next: '' }
 ];
-DAYS[4].q = 'Nos Stories de ' + CONFIG.artist16 + ' tem um envelope escrito à mão. Para quem é?';
-DAYS[4].hint = 'Abra o perfil de ' + CONFIG.artist16 + ' e veja os Stories de hoje. O nome está depois de “Para:”.';
-var ARTISTS = ['Danúbia', 'Davidson Silva', 'Fátima Souza', 'Flávio Vitor Jr.', 'GBA Worship', 'Ramon e Rafael', 'Um Peregrino'];
-/* Dia 14: um vídeo por remetente. Coloque o arquivo .mp4 em img/videos/ e o caminho em "video". Vazio = tela de exemplo. */
+DAYS[3].q = 'Nos Stories de ' + CONFIG.artistClue + ' tem um envelope escrito à mão. Para quem é?';
+DAYS[3].hint = 'Abra o perfil de ' + CONFIG.artistClue + ' e veja os Stories de hoje. O nome está depois de “Para:”.';
+/* Selo 1: um vídeo por artista. Vazio = tela de exemplo. */
 var ACTS = [
   { id: 'danubia', name: 'Danúbia', faces: ['danubia'], video: '' },
   { id: 'davidson', name: 'Davidson Silva', faces: ['davidson'], video: '' },
@@ -243,13 +341,53 @@ function norm(s) { return (s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toU
 function key(w) { try { return btoa(w.split('').reverse().join('')); } catch (e) { return ''; } }
 function matches(input, k) { var words = norm(input).split(' '); var all = norm(input).replace(/ /g, ''); return words.some(function (w) { return key(w) === k; }) || key(all) === k; }
 function cleanName(s) { return (s || '').replace(/[^\p{L}\p{M}' -]/gu, '').trim().split(' ')[0].slice(0, 20); }
+function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
 var nome = cleanName(params.get('nome'));
 if (nome) store('vj-nome', nome); else nome = cleanName(store('vj-nome'));
 var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-function todayIndex() { var t = today(), n = -1; DAYS.forEach(function (d, i) { if (d.d <= t) n = i; }); return n; } // -1 antes de 12/11
+function todayIndex() { var t = today(), n = -1; DAYS.forEach(function (d, i) { if (d.d <= t) n = i; }); return n; }
 function launched() { return today() >= CONFIG.launchDate; }
-function solved(i) { return store('vj-lacre-' + DAYS[i].d) === '1'; }
+function solved(i) { return store('vj-porta-' + DAYS[i].d) === '1'; }
+
+/* ===== Entrada ===== */
+document.body.classList.add('locked');
+$('enter').focus();
+$('enter').addEventListener('click', function () {
+  var intro = $('intro');
+  intro.classList.add('open'); intro.classList.add('gone');
+  if (navigator.vibrate) { try { navigator.vibrate(30); } catch (e) {} }
+  setTimeout(function () { intro.hidden = true; showHome(); }, reduce ? 300 : 1700);
+});
+
+/* ===== Casa: nome e cafezinho ===== */
+var homeReady = false;
+function showHome() {
+  var h = $('home'); h.hidden = false; h.classList.remove('gone');
+  document.body.classList.add('locked');
+  if (!nome) {
+    $('home-k').textContent = 'Pode entrar';
+    $('home-t').textContent = 'Que bom que você chegou.';
+    $('home-sub').textContent = 'Aqui em casa a gente chama cada um pelo nome. Como podemos te chamar?';
+    $('env-to').textContent = 'Para: você';
+    $('nameform').hidden = false; $('homego').hidden = true;
+    $('nm-in').value = ''; $('nm-in').focus();
+    return;
+  }
+  var back = store('vj-visitou') === '1';
+  $('home-k').textContent = 'Você está em casa';
+  $('home-t').textContent = back ? 'Que bom te ver de novo, ' + nome + '.' : 'Fica à vontade, ' + nome + '.';
+  $('home-sub').textContent = back
+    ? 'O café já está passando. A sua carta está na mesa, esperando o selo de hoje.'
+    : 'Você está em casa. Enquanto a gente passa um cafezinho, chegou uma carta no seu nome.';
+  $('env-to').textContent = 'Para: ' + nome;
+  $('nameform').hidden = true; $('homego').hidden = false; $('homego').focus();
+}
+$('homego').addEventListener('click', function () {
+  store('vj-visitou', '1');
+  var h = $('home'); h.classList.add('gone');
+  setTimeout(function () { h.hidden = true; document.body.classList.remove('locked'); homeReady = true; render(); window.scrollTo(0, 0); }, reduce ? 50 : 600);
+});
 
 /* ===== Datilografia ===== */
 var typing = null;
@@ -268,44 +406,43 @@ function type(parts, done) {
     var j = 0;
     (function step() {
       el.textContent = text.slice(0, ++j);
-      if (j < text.length) typing = setTimeout(step, p.c === 'q' ? 22 : 14);
+      if (j < text.length) typing = setTimeout(step, p.c === 'q' || p.c === 'hi' ? 24 : 14);
       else typing = setTimeout(nextPart, 160);
     })();
   }
   nextPart();
 }
 
-/* ===== Revelações ===== */
-function revealNode(kind) {
-  var w = document.createElement('section'); w.className = 'reveal';
-  var html = '';
-  if (kind === 'names') {
-    html = '<div class="kicker">Selo 1 · liberado</div><h2>Estes são os remetentes.</h2><p>Sete artistas escreveram esta carta à mão. Ainda falta descobrir o que tem dentro.</p><ul class="names">' + ARTISTS.map(function (a) { return '<li>' + a + '</li>'; }).join('') + '</ul>';
-  } else if (kind === 'capa') {
-    html = '<div class="kicker">Selo 2 · liberado</div><h2>A carta tem nome.</h2><img class="pic" src="img/capa.jpg" alt="Capa do single Viva Jesus" width="800" height="800"><p>Viva Jesus. Uma música de Natal na voz dos sete remetentes, que chega no dia 17.</p>';
-  } else if (kind === 'foto') {
-    html = '<div class="kicker">Selo 3 · liberado</div><h2>Uma foto que ninguém viu.</h2><div class="postal"><img src="img/artistas.jpg" alt="Os 7 artistas de Viva Jesus reunidos numa sala decorada para o Natal" width="1100" height="700"><div class="cap"><span class="h">com carinho, os remetentes</span><span class="m">Belém · 17 XI</span></div></div>';
-  } else if (kind === 'letra') {
-    html = '<div class="kicker">Selo 4 · liberado</div><h2>As primeiras palavras.</h2><div class="lyric">É mais um Natal\npois o Verbo entre a gente viveu.\nÉ mais um Natal,\no Deus menino nasceu.</div><a class="btn btn-ghost" href="' + CONFIG.teaserUrl + '" target="_blank" rel="noopener">Ouvir o trecho do refrão</a>';
-  } else if (kind === 'liberada') {
-    html = '<div class="kicker">Selo 5 · liberado</div><h2>Carta pronta para envio.</h2><div class="free"><p>Você liberou os cinco selos. Como presente, um áudio dos bastidores que ainda não saiu em lugar nenhum.</p><a class="btn btn-ghost" href="' + CONFIG.bonusUrl + '" target="_blank" rel="noopener">Ouvir o áudio de bastidor</a></div><p>À meia-noite, Viva Jesus chega para todo mundo. Quem guardou a carta recebe primeiro.</p>';
+/* ===== Vídeos ===== */
+function faces(list) { return list.map(function (f) { return '<img src="img/a/' + f + '.jpg" alt="">'; }).join(''); }
+function buildPlayer(opts) {
+  var p = document.createElement('div'); p.className = 'player';
+  var tag = '<span class="tag">Para: ' + esc(nome || 'você') + '</span>';
+  if (opts.video) {
+    p.innerHTML = tag + '<video playsinline controls preload="metadata"></video>';
+    var v = p.querySelector('video'); v.src = opts.video; v.setAttribute('aria-label', opts.label);
+    if (opts.autoplay) v.autoplay = true;
+    v.addEventListener('ended', function () { if (opts.onEnd) opts.onEnd(); });
+  } else {
+    p.innerHTML = tag + '<div class="bg">' + opts.bg + '</div><div class="ph"><span class="av">' + opts.av + '</span><p></p><button class="play" type="button" aria-label="Tocar vídeo"><svg width="22" height="22" viewBox="0 0 22 22" aria-hidden="true"><path d="M6 3 L19 11 L6 19 Z" fill="currentColor"></path></svg></button></div><span class="bar2"></span>';
+    p.querySelector('p').textContent = opts.placeholder;
+    var btn = p.querySelector('.play');
+    btn.addEventListener('click', function () {
+      btn.disabled = true; btn.style.opacity = '.4';
+      var bar = p.querySelector('.bar2'), t0 = null, dur = 3500;
+      function step(ts) { if (!t0) t0 = ts; var k = Math.min(1, (ts - t0) / dur); bar.style.width = (k * 100) + '%'; if (k < 1) requestAnimationFrame(step); else if (opts.onEnd) opts.onEnd(); }
+      requestAnimationFrame(step);
+    });
   }
-  var num = { names: 1, capa: 2, foto: 3, letra: 4, liberada: 5 }[kind];
-  if (num) html = '<img class="bigstamp" src="img/selos/selo-' + num + '.webp" alt="Selo ' + num + ' de 5" width="340" height="430">' + html;
-  w.innerHTML = html;
-  if (kind === 'foto') w.appendChild(buildChooser());
-  return w;
+  return p;
 }
-
-/* ===== Dia 14: escolha um remetente ===== */
-function faces(a) { return a.faces.map(function (f) { return '<img src="img/a/' + f + '.jpg" alt="">'; }).join(''); }
 function buildChooser() {
   var box = document.createElement('div'); box.className = 'chooser';
-  box.innerHTML = '<p class="ask">Escolha um dos remetentes para te mandar uma mensagem.</p><p class="sub">Depois da primeira mensagem, os outros também ficam disponíveis.</p><div class="acts"></div><div class="stagearea"></div>';
+  box.innerHTML = '<p class="ask">Escolha alguém da nossa família para ver uma mensagem especial.</p><p class="sub">Depois da primeira mensagem, os outros também ficam disponíveis.</p><div class="acts"></div><div class="stagearea"></div>';
   var acts = box.querySelector('.acts'), area = box.querySelector('.stagearea');
   function unlocked() { return store('vj-outros') === '1'; }
   function chosen() { return store('vj-escolha'); }
-  function drawButtons() {
+  function draw() {
     acts.textContent = '';
     ACTS.forEach(function (a) {
       var b = document.createElement('button'); b.type = 'button'; b.className = 'act';
@@ -313,7 +450,7 @@ function buildChooser() {
       if (locked) b.classList.add('locked');
       b.setAttribute('aria-pressed', String(chosen() === a.id));
       b.setAttribute('aria-label', a.name + (locked ? ' (libera depois da primeira mensagem)' : ''));
-      b.innerHTML = '<span class="av">' + faces(a) + '</span><span class="nm"></span>';
+      b.innerHTML = '<span class="av">' + faces(a.faces) + '</span><span class="nm"></span>';
       b.querySelector('.nm').textContent = a.name;
       b.addEventListener('click', function () { if (!locked) play(a); });
       acts.appendChild(b);
@@ -321,68 +458,62 @@ function buildChooser() {
   }
   function play(a) {
     if (!chosen()) store('vj-escolha', a.id);
-    drawButtons();
-    area.textContent = '';
-    var p = document.createElement('div'); p.className = 'player';
-    var tag = '<span class="tag">Para: ' + (nome ? nome : 'você').replace(/[<>&"]/g, '') + '</span>';
-    if (a.video) {
-      p.innerHTML = tag + '<video playsinline controls autoplay preload="metadata"></video>';
-      var v = p.querySelector('video'); v.src = a.video; v.setAttribute('aria-label', 'Mensagem de ' + a.name);
-      v.addEventListener('ended', function () { finish(a); });
-    } else {
-      p.innerHTML = tag + '<div class="bg">' + faces(a) + '</div><div class="ph"><span class="av">' + faces(a) + '</span><p></p><button class="play" type="button" aria-label="Tocar mensagem"><svg width="22" height="22" viewBox="0 0 22 22" aria-hidden="true"><path d="M6 3 L19 11 L6 19 Z" fill="currentColor"></path></svg></button></div><span class="bar2"></span>';
-      p.querySelector('p').textContent = 'Aqui entra o vídeo de ' + a.name + ' falando com você (20 a 30 s, vertical).';
-      var playBtn = p.querySelector('.play');
-      playBtn.addEventListener('click', function () {
-        playBtn.disabled = true; playBtn.style.opacity = '.4';
-        var bar = p.querySelector('.bar2'), t0 = null, dur = 3500;
-        (function step(ts) { if (!t0) t0 = ts; var k = Math.min(1, (ts - t0) / dur); bar.style.width = (k * 100) + '%'; if (k < 1) requestAnimationFrame(step); else finish(a); })(performance.now());
-      });
-    }
+    draw(); area.textContent = '';
+    var p = buildPlayer({ video: a.video, autoplay: true, label: 'Mensagem de ' + a.name, bg: faces(a.faces), av: faces(a.faces), placeholder: 'Aqui entra o vídeo de ' + a.name + ': “que bom ter você em casa com a gente…” (20 a 30 s, vertical).', onEnd: function () { finish(); } });
     area.appendChild(p);
     if (!reduce) setTimeout(function () { p.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 100);
   }
-  function finish(a) {
-    var first = !unlocked();
-    store('vj-outros', '1');
-    drawButtons();
+  function finish() {
+    var first = !unlocked(); store('vj-outros', '1'); draw();
     var old = area.querySelector('.after'); if (old) old.remove();
     var af = document.createElement('div'); af.className = 'after';
     af.innerHTML = '<p class="fine"></p>';
-    af.querySelector('.fine').textContent = first ? 'Os outros remetentes também deixaram uma mensagem para você. Toque em outro rosto acima.' : 'Toque em outro rosto acima para ouvir mais um remetente.';
+    af.querySelector('.fine').textContent = first ? 'Os outros também deixaram uma mensagem para você. Toque em outro rosto acima.' : 'Toque em outro rosto acima para ouvir mais alguém.';
     area.appendChild(af);
   }
-  drawButtons();
+  draw();
   return box;
 }
-function ctaNode(i) {
+
+/* ===== Revelações ===== */
+function revealNode(kind) {
+  var w = document.createElement('section'); w.className = 'reveal';
+  var html = '';
+  if (kind === 'familia') html = '<div class="kicker">Selo 1 · colado</div><h2>Que bom ter você em casa com a gente.</h2><div class="postal"><img src="img/artistas.jpg" alt="Os artistas de Viva Jesus reunidos numa sala decorada para o Natal" width="1100" height="700"><div class="cap"><span class="h">com carinho, de portas abertas</span><span class="m">GBA Music</span></div></div><p>Essa é a nossa família. Pode se sentar, o café já vem. E cada um aqui separou um recado só para você.</p>';
+  else if (kind === 'capa') html = '<div class="kicker">Selo 2 · colado</div><h2>Viva Jesus.</h2><img class="pic" src="img/capa.jpg" alt="Capa do single Viva Jesus" width="800" height="800"><p>Esse é o nome da música que a gente vai cantar junto neste Natal. Estamos ansiosos para celebrar em família, com a sua família, cantando Viva Jesus.</p>';
+  else if (kind === 'trecho') html = '<div class="kicker">Selo 3 · colado</div><h2>Um aperitivo antes da ceia.</h2><p>Está quase lá. A gente sempre fica ansioso pela ceia, mas tem que esperar a meia-noite. Só que aqui em casa ninguém espera com fome: escute um trechinho, em primeira mão.</p><a class="btn btn-ghost" href="' + CONFIG.teaserUrl + '" target="_blank" rel="noopener">Ouvir o trechinho</a>';
+  else if (kind === 'obrigado') html = '<div class="kicker">Selo 4 · colado</div><h2>Obrigado por entrar.</h2><div class="note"><span class="hi">Querido(a) ' + esc(nome || 'amigo') + ',</span>É um prazer ter você na nossa casa. Você faz parte de algo especial, e essa música também é sua.\n\nNo dia 17, contamos com você para ouvir e para compartilhar com quem é especial para você.<span class="sign">Com carinho, a família GBA Music</span></div><a class="btn btn-ghost" href="' + CONFIG.premiereUrl + '" target="_blank" rel="noopener">Ativar o lembrete da estreia</a><p class="fine">Abra a estreia no YouTube e toque no sininho para ser avisado quando começar.</p>';
+  var num = { familia: 1, capa: 2, trecho: 3, obrigado: 4 }[kind];
+  if (num) html = '<img class="bigstamp" src="img/selos/selo-' + num + '.webp" alt="Selo ' + num + ' de 4" width="411" height="520">' + html;
+  w.innerHTML = html;
+  if (kind === 'familia') w.insertBefore(buildChooser(), w.lastChild.nextSibling);
+  return w;
+}
+function ctaNode() {
   var f = document.createDocumentFragment();
-  var a = document.createElement('a'); a.className = 'btn btn-primary'; a.target = '_blank'; a.rel = 'noopener'; a.href = CONFIG.presaveUrl;
-  a.textContent = i === 0 ? 'Quero ver a capa primeiro' : 'Guardar minha carta';
-  var p = document.createElement('p'); p.className = 'fine';
-  p.textContent = i === 0 ? 'No link do pré-save você vê a capa antes de todo mundo e já guarda a música para o dia 17.' : 'Salve agora e, no dia 17, a música aparece sozinha na sua biblioteca.';
-  f.appendChild(a); f.appendChild(p);
-  return f;
+  var a = document.createElement('a'); a.className = 'btn btn-primary'; a.target = '_blank'; a.rel = 'noopener'; a.href = CONFIG.presaveUrl; a.textContent = 'Guardar minha carta';
+  var p = document.createElement('p'); p.className = 'fine'; p.textContent = 'Salve agora, para no dia 17 a música já estar na sua biblioteca.';
+  f.appendChild(a); f.appendChild(p); return f;
 }
 function nextNode(i) {
   var n = document.createElement('div'); n.className = 'next';
   var d = DAYS[i + 1];
   n.innerHTML = '<span class="k">' + (d ? 'Amanhã · ' + d.label + ' · 00h' : 'Hoje · 00h') + '</span><span class="v"></span>';
-  n.querySelector('.v').textContent = d ? 'Novo selo: ' + DAYS[i].next : 'À meia-noite, a carta chega para todo mundo.';
+  n.querySelector('.v').textContent = d ? 'Novo selo: ' + DAYS[i].next : 'À meia-noite, a sua carta pode ser lida.';
   return n;
 }
 
-/* ===== Montagem da tela ===== */
+/* ===== Tela ===== */
 var wrong = 0;
 function renderSeals(idx) {
   var box = $('seals'); box.textContent = '';
   DAYS.forEach(function (d, i) {
-    var open = launched() || (i < idx) || (i === idx && solved(i));
-    var div = document.createElement('div');
-    div.className = 'sealbox' + (open ? ' open' : '') + (i === idx && !launched() ? ' today' : '');
-    div.innerHTML = (open ? '<img class="stampimg" src="img/selos/selo-' + (i + 1) + '.webp" alt="">' : '<span class="stamp"><span class="art"><b>?</b></span></span>') + '<span>' + d.label + '</span>';
-    div.setAttribute('aria-label', 'Selo ' + (i + 1) + ', ' + d.label + ', ' + (open ? 'liberado' : 'bloqueado'));
-    box.appendChild(div);
+    var open = launched() || i < idx || (i === idx && solved(i));
+    var el = document.createElement('div');
+    el.className = 'sealbox' + (i === idx && !launched() && !open ? ' today' : '');
+    el.setAttribute('aria-label', 'Selo ' + (i + 1) + ', ' + d.label + ', ' + (open ? 'colado' : 'ainda não'));
+    el.innerHTML = (open ? '<img class="stampimg" src="img/selos/selo-' + (i + 1) + '.webp" alt="">' : '<span class="stamp"><span class="art"><b>' + (i + 1) + '</b></span></span>') + '<span>' + d.label + '</span>';
+    box.appendChild(el);
   });
 }
 function renderPast(idx) {
@@ -392,53 +523,65 @@ function renderPast(idx) {
   $('past').hidden = upto <= 0;
 }
 function render() {
+  if (!homeReady) return;
   var idx = todayIndex();
-  wrong = 0; $('hintbtn').hidden = true; $('answer').hidden = true; $('nameform').hidden = true; $('reveal-slot').textContent = '';
-  $('rename').hidden = !nome;
-  if (!nome) {
-    renderSeals(idx); $('past').hidden = true;
-    $('bar-right').textContent = 'Identificação';
-    type([{ t: '> buscando objeto VJ1711...', c: 'dim' }, { t: '> carta de Natal encontrada.', c: 'ok' }, { t: '> falta o nome do destinatário.', c: 'p' }, { t: 'Para quem é esta carta?', c: 'q' }], function () { $('nameform').hidden = false; $('nm-in').value = ''; });
-    return;
-  }
+  wrong = 0; $('hintbtn').hidden = true; $('answer').hidden = true;
+  $('reveal-slot').textContent = '';
   $('term').classList.remove('shake');
-  var who = nome ? 'para: ' + nome.toUpperCase() : 'para: você';
-  renderSeals(idx); renderPast(idx);
+  $('rename').hidden = !nome;
+  $('letter-to').textContent = 'Carta para ' + (nome || 'você');
+  $('letter-date').textContent = idx >= 0 && !launched() ? DAYS[idx].label : (launched() ? '17/11' : 'Viva Jesus');
+  renderSeals(idx);
+
+  if (!nome) { homeReady = false; showHome(); return; }
+  renderPast(idx);
 
   if (launched()) {
-    $('bar-right').textContent = 'Entregue';
-    type([{ t: '> objeto VJ1711 · ' + who, c: 'dim' }, { t: '> 5 de 5 selos colados. carta enviada.', c: 'ok' }, { t: '> status: ENTREGUE.', c: 'ok' }, { t: 'Viva Jesus chegou. Agora é a sua vez de mandar para alguém.', c: 'q' }]);
+    $('bar-right').textContent = 'Chegou';
+    type([{ t: 'Querido(a) ' + nome + ',', c: 'hi' }, { t: 'os quatro selos estão colados.', c: 'ok' }, { t: 'a sua carta finalmente foi aberta.', c: 'ok' }, { t: 'Viva Jesus! Agora mande para alguém especial.', c: 'q' }]);
     var r = document.createElement('section'); r.className = 'reveal';
-    r.innerHTML = '<img class="bigstamp" src="img/selos/carimbo-entregue.webp" alt="Carimbo: Entregue, 17 de novembro" width="300" height="430"><div class="kicker">17 · XI</div><h2>A carta chegou.</h2><img class="pic" src="img/capa.jpg" alt="Capa do single Viva Jesus" width="800" height="800">';
+    r.innerHTML = '<img class="bigstamp" src="img/selos/carimbo-entregue.webp" alt="Carimbo: Entregue, 17 de novembro" width="300" height="300"><div class="kicker">17 · XI</div><h2>A carta finalmente foi aberta.</h2><div class="note"><span class="hi">Querido(a) ' + esc(nome) + ',</span>A gente manda carta para quem é especial. E vocês são especiais para nós.\n\nPor isso, hoje a gente quer celebrar junto, com essa música, na nossa casa e na sua.<span class="sign">Viva Jesus! A família GBA Music</span></div><img class="pic" src="img/capa.jpg" alt="Capa do single Viva Jesus" width="800" height="800">';
     var a = document.createElement('a'); a.className = 'btn btn-primary'; a.href = CONFIG.listenUrl; a.target = '_blank'; a.rel = 'noopener'; a.textContent = 'Ouvir agora';
-    r.appendChild(a); $('reveal-slot').appendChild(r);
+    r.appendChild(a);
+    var sh = document.createElement('button'); sh.type = 'button'; sh.className = 'btn btn-ghost'; sh.textContent = 'Mandar para alguém';
+    var msg = document.createElement('p'); msg.className = 'fine'; msg.setAttribute('aria-live', 'polite');
+    var cl = document.createElement('div'); cl.className = 'copyline'; cl.hidden = true; cl.innerHTML = '<label class="fine" for="share-url" style="position:absolute;left:-9999px">Link para enviar</label><input id="share-url" type="text" readonly>';
+    sh.addEventListener('click', function () {
+      var text = 'Tem uma carta de Natal para você: ' + CONFIG.siteUrl;
+      function copy() {
+        var input = cl.querySelector('input'); input.value = text; cl.hidden = false;
+        if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(function () { msg.textContent = 'Link copiado. Cole no WhatsApp de quem você ama.'; }).catch(function () { input.select(); msg.textContent = 'Selecione e copie o link acima.'; });
+        else { input.select(); msg.textContent = 'Selecione e copie o link acima.'; }
+      }
+      if (navigator.share) navigator.share({ title: 'Uma carta de Natal', text: 'Tem uma carta de Natal para você:', url: CONFIG.siteUrl }).catch(copy); else copy();
+    });
+    r.appendChild(sh); r.appendChild(cl); r.appendChild(msg);
+    $('reveal-slot').appendChild(r);
     return;
   }
   if (idx < 0) {
-    $('bar-right').textContent = 'Abre 12/11';
-    type([{ t: '> central de triagem em preparação.', c: 'dim' }, { t: '> primeiro selo disponível em 12/11 · 00h.', c: 'p' }]);
+    $('bar-right').textContent = 'Abre 13/11';
+    type([{ t: 'Querido(a) ' + nome + ',', c: 'hi' }, { t: 'esta carta só pode ser lida com 4 selos.', c: 'dim' }, { t: 'o primeiro selo chega em 13/11, à meia-noite.', c: 'p' }]);
     return;
   }
-  $('bar-right').textContent = 'Selo ' + (idx + 1) + ' de 5';
-  var d = DAYS[idx];
+  $('bar-right').textContent = 'Selo ' + (idx + 1) + ' de 4';
   if (solved(idx)) { showSolved(idx, false); return; }
+  var d = DAYS[idx];
   var intro = idx === 0
-    ? [{ t: '> buscando objeto VJ1711...', c: 'dim' }, { t: '> ' + who, c: 'dim' }, { t: '> ERRO: carta retida na central.', c: 'err' }, { t: '> faltam 5 selos para o envio.', c: 'p' }, { t: '> um selo é liberado por dia.', c: 'p' }, { t: '> SELO 1 · charada do dia:', c: 'p' }]
-    : [{ t: '> objeto VJ1711 · ' + who, c: 'dim' }, { t: '> ' + idx + ' de 5 selos colados.', c: 'ok' }, { t: '> SELO ' + (idx + 1) + ' · charada do dia:', c: 'p' }];
+    ? [{ t: 'Querido(a) ' + nome + ',', c: 'hi' }, { t: 'que bom ter você aqui em casa.', c: 'dim' }, { t: 'esta carta é para você, mas para ler, ela precisa de 4 selos.', c: 'dim' }, { t: 'um selo por dia, até o dia 17.', c: 'dim' }, { t: 'para ganhar o selo de hoje, responda:', c: 'p' }]
+    : [{ t: 'Querido(a) ' + nome + ',', c: 'hi' }, { t: idx + ' de 4 selos colados nesta carta.', c: 'ok' }, { t: 'para ganhar o selo de hoje, responda:', c: 'p' }];
   intro.push({ t: d.q, c: 'q' });
   type(intro, function () { $('answer').hidden = false; $('ans').value = ''; });
 }
 function showSolved(idx, fresh) {
-  var d = DAYS[idx];
-  var lines = [{ t: '> SELO ' + (idx + 1) + ' liberado.', c: 'ok' }, { t: '> ' + (idx + 1) + ' de 5 selos colados.', c: 'ok' }];
-  if (DAYS[idx + 1]) lines.push({ t: '> próximo selo: ' + DAYS[idx + 1].label + ' · 00h.', c: 'p' });
-  else lines.push({ t: '> carta pronta. entrega: hoje, 00h.', c: 'p' });
+  var lines = [{ t: 'selo ' + (idx + 1) + ' colado na sua carta.', c: 'ok' }, { t: (idx + 1) + ' de 4 selos.', c: 'ok' }];
+  if (DAYS[idx + 1]) lines.push({ t: 'o próximo selo chega em ' + DAYS[idx + 1].label + ', à meia-noite.', c: 'p' });
+  else lines.push({ t: 'à meia-noite, a carta pode ser lida.', c: 'p' });
   type(lines);
   renderSeals(idx);
   var slot = $('reveal-slot'); slot.textContent = '';
-  slot.appendChild(revealNode(d.reveal));
-  slot.appendChild(ctaNode(idx));
-  slot.appendChild(nextNode(idx));
+  slot.appendChild(revealNode(DAYS[idx].reveal));
+  slot.appendChild(ctaNode());
   if (fresh && !reduce) setTimeout(function () { slot.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 900);
 }
 
@@ -446,23 +589,23 @@ $('nameform').addEventListener('submit', function (e) {
   e.preventDefault();
   var v = cleanName($('nm-in').value);
   if (!v) { $('nm-in').focus(); return; }
-  nome = v; store('vj-nome', v); render();
+  nome = v; store('vj-nome', v); showHome();
 });
-$('rename').addEventListener('click', function () { nome = ''; store('vj-nome', ''); render(); setTimeout(function () { $('nm-in').focus(); }, 50); });
+$('rename').addEventListener('click', function () { nome = ''; store('vj-nome', ''); try { localStorage.removeItem('vj-visitou'); } catch (e) {} homeReady = false; showHome(); });
 $('answer').addEventListener('submit', function (e) {
   e.preventDefault();
   var idx = todayIndex(); if (idx < 0) return;
   var v = $('ans').value;
   if (!norm(v)) { $('ans').focus(); return; }
   if (matches(v, DAYS[idx].k)) {
-    store('vj-lacre-' + DAYS[idx].d, '1');
+    store('vj-porta-' + DAYS[idx].d, '1');
     $('answer').hidden = true; $('hintbtn').hidden = true;
     if (navigator.vibrate) { try { navigator.vibrate([30, 40, 60]); } catch (er) {} }
     showSolved(idx, true);
   } else {
     wrong++;
     var t = $('term'); t.classList.remove('shake'); void t.offsetWidth; t.classList.add('shake');
-    var line = document.createElement('span'); line.className = 'err'; line.textContent = '\n> "' + norm(v) + '" não libera este selo. tente de novo.';
+    var line = document.createElement('span'); line.className = 'err'; line.textContent = '\n“' + v.trim() + '” não é a resposta. tente de novo.';
     $('lines').insertBefore(line, $('lines').querySelector('.caret'));
     if (wrong >= 2) $('hintbtn').hidden = false;
     $('ans').select();
@@ -470,7 +613,7 @@ $('answer').addEventListener('submit', function (e) {
 });
 $('hintbtn').addEventListener('click', function () {
   var idx = todayIndex();
-  var line = document.createElement('span'); line.className = 'dim'; line.textContent = '\n> dica: ' + DAYS[idx].hint;
+  var line = document.createElement('span'); line.className = 'dim'; line.textContent = '\ndica: ' + DAYS[idx].hint;
   $('lines').insertBefore(line, $('lines').querySelector('.caret'));
   $('hintbtn').hidden = true; $('ans').focus();
 });
@@ -486,11 +629,9 @@ function renderTestbar() {
     box.appendChild(b);
   });
   var z = document.createElement('button'); z.type = 'button'; z.textContent = 'Zerar';
-  z.addEventListener('click', function () { DAYS.forEach(function (d) { try { localStorage.removeItem('vj-lacre-' + d.d); } catch (e) {} }); try { localStorage.removeItem('vj-escolha'); localStorage.removeItem('vj-outros'); localStorage.removeItem('vj-nome'); } catch (e) {} nome = cleanName(params.get('nome')); render(); });
+  z.addEventListener('click', function () { DAYS.forEach(function (d) { try { localStorage.removeItem('vj-porta-' + d.d); } catch (e) {} }); try { ['vj-escolha', 'vj-outros', 'vj-nome', 'vj-visitou'].forEach(function (k) { localStorage.removeItem(k); }); } catch (e) {} nome = cleanName(params.get('nome')); homeReady = false; showHome(); });
   box.appendChild(z);
 }
-
-render();
 renderTestbar();
 </script>
 
